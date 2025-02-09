@@ -39,7 +39,6 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
   }
 
   agent {
-    # read 'Qemu guest agent' section, change to true only when ready
     enabled = true
   }
 
@@ -89,7 +88,6 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
     datastore_id = var.virtual_environment.datastore_id
   }
 
-  #serial_device {}
 }
 
 resource "proxmox_virtual_environment_download_file" "image" {
@@ -99,28 +97,6 @@ resource "proxmox_virtual_environment_download_file" "image" {
   node_name    = var.virtual_environment.node_name
   url          = var.image_url
   overwrite = false
-}
-
-resource "random_password" "ubuntu_vm_password" {
-  length           = 16
-  override_special = "_%@"
-  special          = true
-}
-
-resource "tls_private_key" "ubuntu_vm_key" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
-}
-
-resource "local_sensitive_file" "cloud_pem" { 
-  filename = pathexpand("~/.ssh/${var.project.name}.pem")
-  content = tls_private_key.ubuntu_vm_key.private_key_pem
-}
-
-resource "local_sensitive_file" "cloud_public" { 
-  filename = "${path.module}/id_rsa.pub"
-  #content = tls_private_key.ubuntu_vm_key.private_key_pem
-  content = tls_private_key.ubuntu_vm_key.public_key_openssh
 }
 
 resource "proxmox_virtual_environment_file" "cloud_config" {

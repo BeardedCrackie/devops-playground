@@ -46,6 +46,11 @@ variable "vm_name" {
     default = "vm"
 }
 
+variable "vm_count" {
+    type = number
+    default = 1
+}
+
 variable "priv_key_path" {
     type = string
     description = "Path to the public key file"

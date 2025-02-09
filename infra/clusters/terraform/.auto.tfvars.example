@@ -18,6 +18,7 @@ vm = {
     dns_servers = ["8.8.8.8"]
 } 
 
+vm_count = 1
 vm_ip = "192.168.0.80"
 vm_name = "vm_name"
 priv_key_path = "~/.ssh/id_ed25519"
