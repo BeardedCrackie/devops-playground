@@ -39,3 +39,6 @@ terraform.rc
 
 # Ignore autovar
 */.auto.tfvars
+
+# Ignore backend config
+backend.tf 
