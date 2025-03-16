@@ -1,0 +1,38 @@
+- hosts: microk8s
+  become: true
+  roles:
+    - role: istvano.microk8s
+      vars:
+        microk8s_plugins:
+          dns: "8.8.8.8"
+          istio: true
+          ingress: true
+          helm: true                             # Helm 3
+          helm3: false                             # helm3 is not supported, instead use helm
+        users: 
+          - "{{ ansible_user }}"
+        microk8s_enable_HA: true # enable high-availability?
+        microk8s_group_HA: "microk8s" # hostgroup whose members will form high-availability cluster
+
+  tasks:
+    - name: Generate kubeconfig from microk8s
+      command: microk8s config
+      register: kubeconfig_output
+
+    - name: Save kubeconfig to file on remote
+      copy:
+        content: "{{ kubeconfig_output.stdout }}"
+        dest: "/home/{{ ansible_user }}/.kube/config"
+        mode: '0600'
+
+    - name: Copy kubeconfig to local machine
+      become: false
+      local_action: copy content="{{ kubeconfig_output.stdout }}" dest="../k8s/kubeconfig"
+      delegate_to: localhost
+
+    - name: Add alias kubectl to .bashrc
+      lineinfile:
+        path: "/home/{{ ansible_user }}/.bashrc"
+        line: 'alias kubectl="microk8s kubectl"'
+        create: yes  # Create the file if it doesn't exist
+        state: present  # Ensure the line is present
