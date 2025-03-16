@@ -60,3 +60,24 @@ depends_on = [null_resource.ansible_inventory]
     EOT
   }
 }
+
+resource "kubernetes_namespace" "dev" {
+  depends_on = [null_resource.ansible_setup_microk8s]
+  metadata {
+    name = "dev"
+  }
+}
+
+resource "kubernetes_namespace" "stage" {
+  depends_on = [null_resource.ansible_setup_microk8s]
+  metadata {
+    name = "stage"
+  }
+}
+
+resource "kubernetes_namespace" "prod" {
+  depends_on = [null_resource.ansible_setup_microk8s]
+  metadata {
+    name = "prod"
+  }
+}
