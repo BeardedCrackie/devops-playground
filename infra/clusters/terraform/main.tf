@@ -26,12 +26,20 @@ module "proxmox-ubuntu-vm" {
   vm_username = var.vm_username
 }
 
-#resource "local_file" "ansible_inventory" {
-#  filename = "ansible_inventory.ini"
-#  content  = <<-EOF
-#    [${var.project_name}]
-#    ${join("\n", [for i in range(module.proxmox-ubuntu-vm.vm_count) : "${var.project_name}-${i+1} ansible_host=${module.proxmox-ubuntu-vm.ipv4_address[i]} ansible_user=${var.vm_username} ansible_ssh_private_key_file=${var.priv_key_path} ansible_python_interpreter=/usr/bin/python3"])}
-#    [all:vars]
-#    ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-#  EOF
-#}
+resource "null_resource" "run_ansible" {
+depends_on = [module.proxmox-ubuntu-vm]
+  triggers = {
+    always_run = timestamp()  # Changes on every apply, forcing execution
+  }
+  provisioner "local-exec" {
+    command = <<-EOT
+      # Write inventory to a file
+      terraform output -raw ansible_inventory > ../ansible/inventory.ini
+
+      # Run Ansible Playbook
+      # Run Ansible Playbook
+      ansible-playbook -i ../ansible/inventory.ini ../ansible/microk8s-setup.yaml
+
+    EOT
+  }
+}

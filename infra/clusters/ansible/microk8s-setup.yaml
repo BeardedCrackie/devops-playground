@@ -1,0 +1,9 @@
+- hosts: all
+  become: true
+  roles:
+    - role: istvano.microk8s
+      vars:
+        microk8s_plugins:
+          dns: "8.8.8.8"
+          istio: true
+          ingress: true

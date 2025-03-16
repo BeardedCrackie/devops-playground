@@ -42,3 +42,6 @@ terraform.rc
 
 # Ignore backend config
 backend.tf 
+
+# Ignore ansible inventory
+inventory.ini
