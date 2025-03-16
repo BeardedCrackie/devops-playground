@@ -111,10 +111,3 @@ resource "helm_release" "argocd" {
     EOF
   ]
 }
-
-output "argocd_initial_password" {
-  value = <<EOT
-  To get the ArgoCD admin password, run:
-  kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode
-  EOT
-}
