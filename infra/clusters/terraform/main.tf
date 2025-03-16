@@ -4,6 +4,10 @@ terraform {
       source = "bpg/proxmox"
       version = "0.70.1"
     }
+    kubernetes = {
+      source = "hashicorp/kubernetes"
+      version = "2.36.0"
+    }
   }
 }
 
@@ -18,6 +22,10 @@ provider "proxmox" {
   }
 }
 
+provider "kubernetes" {
+  config_path = "../k8s/kubeconfig"  # Path to the kubeconfig file from the VM
+}
+
 module "proxmox-ubuntu-vm" {
   source = "./modules/proxmox-ubuntu-vm"
   vm_count  = 3  # This will create 3 VM instances
@@ -28,9 +36,6 @@ module "proxmox-ubuntu-vm" {
 
 resource "null_resource" "ansible_inventory" {
 depends_on = [module.proxmox-ubuntu-vm]
-  triggers = {
-    always_run = timestamp()  # Changes on every apply, forcing execution
-  }
   provisioner "local-exec" {
     command = <<-EOT
       # Generate inventory file
@@ -46,9 +51,6 @@ depends_on = [module.proxmox-ubuntu-vm]
 
 resource "null_resource" "ansible_setup_microk8s" {
 depends_on = [null_resource.ansible_inventory]
-  triggers = {
-    always_run = timestamp()  # Changes on every apply, forcing execution
-  }
   provisioner "local-exec" {
     command = <<-EOT
       ansible-playbook -i ../ansible/inventory.ini ../ansible/after-provision-setup.yaml \

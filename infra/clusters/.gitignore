@@ -45,3 +45,6 @@ backend.tf
 
 # Ignore ansible inventory
 inventory.ini
+
+# Ignore kubeconfig
+kubeconfig
