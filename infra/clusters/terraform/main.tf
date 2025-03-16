@@ -26,6 +26,12 @@ provider "kubernetes" {
   config_path = "../k8s/kubeconfig"  # Path to the kubeconfig file from the VM
 }
 
+provider "helm" {
+  kubernetes {
+    config_path = "../k8s/kubeconfig"
+  }
+}
+
 module "proxmox-ubuntu-vm" {
   source = "./modules/proxmox-ubuntu-vm"
   vm_count  = 3  # This will create 3 VM instances
@@ -82,4 +88,33 @@ resource "kubernetes_namespace" "prod" {
   metadata {
     name = "prod"
   }
+}
+
+resource "kubernetes_namespace" "argocd" {
+  depends_on = [null_resource.ansible_setup_microk8s]
+  metadata {
+    name = "argocd"
+  }
+}
+
+resource "helm_release" "argocd" {
+  name       = "argocd"
+  repository = "https://argoproj.github.io/argo-helm"
+  chart      = "argo-cd"
+  namespace  = kubernetes_namespace.argocd.metadata[0].name
+
+  values = [
+    <<-EOF
+    server:
+      service:
+        type: NodePort  # Change to "LoadBalancer" "NodePort" or "ClusterIP" if needed
+    EOF
+  ]
+}
+
+output "argocd_initial_password" {
+  value = <<EOT
+  To get the ArgoCD admin password, run:
+  kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode
+  EOT
 }
