@@ -1,0 +1,8 @@
+- name: Set hostname of the device
+  hosts: all  # Define the group or hosts here
+  become: true  # Use sudo privileges
+
+  tasks:
+    - name: Set the hostname
+      hostname:
+        name: "{{ inventory_hostname }}"  # Use the hostname from the inventory or define it
