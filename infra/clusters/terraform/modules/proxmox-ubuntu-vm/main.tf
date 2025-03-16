@@ -79,7 +79,7 @@ resource "proxmox_virtual_environment_file" "cloud_config" {
   node_name    = var.pve_node_name
 
   source_raw {
-    #hostname: ${var.vm_name}-${count.index + 1}
+    #hostname: ${var.vm_name}-${vm_count.index + 1}
     data = <<-EOF
     #cloud-config
     users:

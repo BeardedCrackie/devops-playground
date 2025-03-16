@@ -20,8 +20,8 @@ provider "proxmox" {
 
 module "proxmox-ubuntu-vm" {
   source = "./modules/proxmox-ubuntu-vm"
-  count  = 2  # This will create 3 VM instances
-  vm_name = "var.project_name"
+  vm_count  = 3  # This will create 3 VM instances
+  vm_name = var.project_name
   public_key = local.public_key_content
   vm_username = var.vm_username
 }
@@ -30,7 +30,7 @@ module "proxmox-ubuntu-vm" {
 #  filename = "ansible_inventory.ini"
 #  content  = <<-EOF
 #    [${var.project_name}]
-#    ${join("\n", [for i in range(module.proxmox-ubuntu-vm.count) : "${var.project_name}-${i+1} ansible_host=${module.proxmox-ubuntu-vm.ipv4_address[i]} ansible_user=${var.vm_username} ansible_ssh_private_key_file=${var.priv_key_path} ansible_python_interpreter=/usr/bin/python3"])}
+#    ${join("\n", [for i in range(module.proxmox-ubuntu-vm.vm_count) : "${var.project_name}-${i+1} ansible_host=${module.proxmox-ubuntu-vm.ipv4_address[i]} ansible_user=${var.vm_username} ansible_ssh_private_key_file=${var.priv_key_path} ansible_python_interpreter=/usr/bin/python3"])}
 #    [all:vars]
 #    ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 #  EOF
