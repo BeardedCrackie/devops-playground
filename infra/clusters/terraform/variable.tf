@@ -9,42 +9,14 @@ variable "virtual_environment" {
     sensitive = true
 } 
 
-variable "project" {
-    type = object({
-        name = string
-    })
+variable "project_name" {
+    type = string
 } 
 
-variable "image_url" {
+variable "vm_username" {
     type = string
-    default = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
-}
-
-variable "vm" {
-    type = object({
-        username = string
-        ip = string
-        prefix = string
-        gw = string
-        dns_servers = list(string)
-    })
-    default = {
-      username = "ubuntu"
-      ip = "192.168.0.80"
-      prefix = "24"
-      gw = "192.168.0.1"
-      dns_servers = ["8.8.8.8"]
-    }
+    default = "ubuntu"
 } 
-
-variable "vm_ip" {
-    type = string
-}
-
-variable "vm_name" {
-    type = string
-    default = "vm"
-}
 
 variable "vm_count" {
     type = number
