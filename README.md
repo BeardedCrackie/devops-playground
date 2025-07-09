@@ -1,12 +1,13 @@
 # devops-playground
 
+```
 repo-root/
 ├── apps/                    # Application repositories (code and Dockerfiles)
 │   ├── app1/               # Application 1 (e.g., Health Check Microservice)
 │   │   ├── src/            # Source code
 │   │   ├── Dockerfile      # Dockerfile for this app
 │   │   ├── requirements.txt # App dependencies (for Python, etc.)
-|   |   ├── docs/                   # Documentation for both app and infra
+|   |   ├── docs/           # Documentation for both app and infra
 │   │   └── README.md       # App-specific README
 │   ├── app2/               # Application 2 (e.g., To-Do API)
 │   └── app3/               # Application 3 (another example app)
@@ -31,10 +32,7 @@ repo-root/
 │   │   └── flux.yaml       # Flux configuration (optional, depending on tool)
 │   ├── monitoring/         # Monitoring and observability (Prometheus, Grafana)
 │   └── README.md           # Infrastructure-specific README
-│   ├── README.md           # General project overview
-│   ├── gitops-workflows.md # GitOps workflows and usage
-│   └── troubleshooting.md  # Troubleshooting steps for app and infra
 |
 ├── .gitignore              # Ignore unnecessary files - linked to subdirs if neede
 └── README.md               # General README for the repository
-
+```
