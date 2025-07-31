@@ -1,0 +1,13 @@
+{{- if .Values.mongo.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "tasklist.fullname" . }}-mongo
+spec:
+  type: {{ .Values.mongo.service.type }}
+  ports:
+    - port: {{ .Values.mongo.service.port }}
+      targetPort: 27017
+  selector:
+    app: {{ include "tasklist.name" . }}-mongo
+{{- end }}
