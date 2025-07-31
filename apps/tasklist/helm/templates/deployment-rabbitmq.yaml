@@ -1,0 +1,38 @@
+{{- if .Values.rabbitmq.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tasklist.fullname" . }}-rabbitmq
+  labels:
+    app: {{ include "tasklist.name" . }}-rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "tasklist.name" . }}-rabbitmq
+  template:
+    metadata:
+      labels:
+        app: {{ include "tasklist.name" . }}-rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: "{{ .Values.rabbitmq.image.repository }}:{{ .Values.rabbitmq.image.tag }}"
+          imagePullPolicy: {{ .Values.rabbitmq.image.pullPolicy }}
+          ports:
+            - containerPort: 5672
+            - containerPort: 15672
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              value: {{ .Values.rabbitmq.env.RABBITMQ_DEFAULT_USER | quote }}
+            - name: RABBITMQ_DEFAULT_PASS
+              value: {{ .Values.rabbitmq.env.RABBITMQ_DEFAULT_PASS | quote }}
+          volumeMounts:
+            - name: rabbitmq-data
+              mountPath: /var/lib/rabbitmq
+          resources: {{- toYaml .Values.rabbitmq.resources | nindent 12 }}
+      volumes:
+        - name: rabbitmq-data
+          persistentVolumeClaim:
+            claimName: {{ include "tasklist.fullname" . }}-rabbitmq-pvc
+{{- end }}

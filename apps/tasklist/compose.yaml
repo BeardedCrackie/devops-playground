@@ -1,0 +1,60 @@
+
+services:
+
+  backend:
+    build: ./app-be
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app-be:/app
+    command: uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      MONGO_URI: mongodb://mongo:27017
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASS: ${RABBITMQ_PASS}
+    depends_on:
+      - rabbitmq
+      - mongo
+
+  frontend:
+    build: ./app-fe
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+        
+  celery:
+    build: ./app-be
+    command: celery -A celery_worker.celery_app worker --loglevel=info
+    depends_on:
+      - rabbitmq
+      - backend
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASS: ${RABBITMQ_PASS}
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"     # RabbitMQ messaging port (AMQP)
+      - "15672:15672"   # Web UI port
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  rabbitmq-data:
+  mongo-data:

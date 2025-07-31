@@ -1,0 +1,70 @@
+backend:
+  image:
+    repository: "localhost:32000/tasklist-backend"
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  env:
+    MONGO_URI: "mongodb://mongo:27017"
+    RABBITMQ_HOST: rabbitmq
+    RABBITMQ_PORT: 5672
+    RABBITMQ_USER: "user"
+    RABBITMQ_PASS: "pass"
+  resources: {}
+
+frontend:
+  image:
+    repository: "localhost:32000/tasklist-frontend"
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 80
+  resources: {}
+
+celery:
+  image:
+    repository: "localhost:32000/tasklist-backend"
+    tag: latest
+    pullPolicy: IfNotPresent
+  command: ["celery", "-A", "celery_worker.celery_app", "worker", "--loglevel=info"]
+  env:
+    RABBITMQ_HOST: rabbitmq
+    RABBITMQ_PORT: 5672
+    RABBITMQ_USER: "user"
+    RABBITMQ_PASS: "pass"
+  resources: {}
+
+rabbitmq:
+  enabled: true
+  image:
+    repository: rabbitmq
+    tag: 3-management
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    amqpPort: 5672
+    uiPort: 15672
+  env:
+    RABBITMQ_DEFAULT_USER: "user"
+    RABBITMQ_DEFAULT_PASS: "pass"
+  persistence:
+    enabled: true
+    size: 1Gi
+  resources: {}
+
+mongo:
+  enabled: true
+  image:
+    repository: mongo
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 27017
+  persistence:
+    enabled: true
+    size: 1Gi
+  resources: {}

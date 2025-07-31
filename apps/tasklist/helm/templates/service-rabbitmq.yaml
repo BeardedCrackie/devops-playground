@@ -1,0 +1,17 @@
+{{- if .Values.rabbitmq.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "tasklist.fullname" . }}-rabbitmq
+spec:
+  type: {{ .Values.rabbitmq.service.type }}
+  ports:
+    - name: amqp
+      port: {{ .Values.rabbitmq.service.amqpPort }}
+      targetPort: 5672
+    - name: ui
+      port: {{ .Values.rabbitmq.service.uiPort }}
+      targetPort: 15672
+  selector:
+    app: {{ include "tasklist.name" . }}-rabbitmq
+{{- end }}
