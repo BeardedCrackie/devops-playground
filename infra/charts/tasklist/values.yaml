@@ -1,14 +1,14 @@
 backend:
   image:
-    repository: "localhost:32000/tasklist-backend"
+    repository: "tasklist-backend"
     tag: latest
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 8000
   env:
-    MONGO_URI: "mongodb://mongo:27017"
-    RABBITMQ_HOST: rabbitmq
+    MONGO_URI: "mongodb://tasklist-mongo:27017"
+    RABBITMQ_HOST: tasklist-rabbitmq
     RABBITMQ_PORT: 5672
     RABBITMQ_USER: "user"
     RABBITMQ_PASS: "pass"
@@ -16,22 +16,23 @@ backend:
 
 frontend:
   image:
-    repository: "localhost:32000/tasklist-frontend"
+    repository: "tasklist-frontend"
     tag: latest
     pullPolicy: IfNotPresent
   service:
     type: NodePort
     port: 80
+  env:
+    API_URL: "http://tasklist-backend:8000" # Set your backend API URL here
   resources: {}
-
 celery:
   image:
-    repository: "localhost:32000/tasklist-backend"
+    repository: "tasklist-backend"
     tag: latest
     pullPolicy: IfNotPresent
   command: ["celery", "-A", "celery_worker.celery_app", "worker", "--loglevel=info"]
   env:
-    RABBITMQ_HOST: rabbitmq
+    RABBITMQ_HOST: tasklist-rabbitmq
     RABBITMQ_PORT: 5672
     RABBITMQ_USER: "user"
     RABBITMQ_PASS: "pass"
