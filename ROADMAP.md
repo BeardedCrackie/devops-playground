@@ -1,0 +1,36 @@
+# 🗺️ Project Roadmap
+
+This roadmap outlines the infrastructure and application goals, progress, and current status.
+
+---
+
+## 🛠️ Infra
+
+### 🚀 Provisioning
+- [x] Proxmox Ubuntu provision with Terraform
+- [x] Ansible init microk8s
+- [ ] Proxmox provision Talos with Terraform
+
+### 🧱 Base Apps
+- [x] Helm
+- [ ] Tekton
+- [ ] ArgoCD
+- [ ] RabbitMQ + operator
+- [ ] Prometheus + Grafana
+- [ ] Postgre + Operator
+- [ ] Loki
+- [ ] Jaeger
+
+---
+
+## 🧩 Apps
+
+### Tasklist
+- [x] FastAPI backend
+- [x] Frontend
+- [x] Docker + Docker Compose setup
+- [x] Celery worker for async job
+- [x] Persistent data with Mongo
+- [x] Basic Helm chart
+- [ ] Implement healthchecks
+- [ ] Implement metrics
