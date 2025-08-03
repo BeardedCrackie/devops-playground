@@ -1,4 +1,5 @@
-const API_BASE = "http://localhost:8000";
+const API_BASE = window.ENV.API_URL;
+const WS_BASE = window.ENV.WS_URL;
 
 const form = document.getElementById("task-form");
 const titleInput = document.getElementById("title");
@@ -6,7 +7,7 @@ const descInput = document.getElementById("description");
 const taskList = document.getElementById("task-list");
 
 
-const ws = new WebSocket("ws://localhost:8000/ws/notifications");
+const ws = new WebSocket(`${WS_BASE}/ws/notifications`);
 
 document.addEventListener("DOMContentLoaded", () => {
   if ("Notification" in window && Notification.permission !== "granted") {

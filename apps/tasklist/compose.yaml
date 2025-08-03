@@ -1,4 +1,3 @@
-
 services:
 
   backend:
@@ -22,6 +21,9 @@ services:
     build: ./app-fe
     ports:
       - "8080:80"
+    environment:
+      API_URL: ${API_URL}
+      WS_URL: ${WS_URL}
     depends_on:
       - backend
         
