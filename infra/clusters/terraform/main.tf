@@ -1,4 +1,3 @@
-
 module "proxmox-ubuntu-vm" {
   source = "./modules/proxmox-ubuntu-vm"
   vm_count  = 3  # This will create 3 VM instances
@@ -9,37 +8,16 @@ module "proxmox-ubuntu-vm" {
   vm_username = var.vm_username
 }
 
-resource "null_resource" "ansible_inventory" {
-depends_on = [module.proxmox-ubuntu-vm]
-  provisioner "local-exec" {
-    command = <<-EOT
-      # Generate inventory file
-      echo "[microk8s]" > ../ansible/inventory.ini
-      i=1
-      for ip in ${join(" ", module.proxmox-ubuntu-vm.ipv4_address)}; do
-        echo "microk8s-node-$i ansible_host=$ip ansible_user=${var.vm_username} ansible_ssh_private_key_file=${var.priv_key_path}" >> ../ansible/inventory.ini
-        i=$((i+1))
-      done
-    EOT
-  }
-}
-
-resource "null_resource" "ansible_setup_microk8s" {
-  depends_on = [null_resource.ansible_inventory]
-  provisioner "local-exec" {
-    command = <<-EOT
-      # Activate Python virtual environment and run Ansible
-      source ../venv/bin/activate
-      ../venv/bin/ansible-playbook -i ../ansible/inventory.ini ../ansible/after-provision-setup.yaml \
-        -e "ansible_ssh_extra_args='-o StrictHostKeyChecking=no'"
-      ../venv/bin/ansible-playbook -i ../ansible/inventory.ini ../ansible/microk8s-setup.yaml \
-        -e "ansible_user=${var.vm_username}"
-    EOT
-  }
+module "ansible_microk8s" {
+  source = "./modules/ansible-microk8s"
+  vm_username = var.vm_username
+  priv_key_path = var.priv_key_path
+  vm_ips = module.proxmox-ubuntu-vm.ipv4_address
+  depends_on = [module.proxmox-ubuntu-vm]
 }
 
 resource "kubernetes_namespace" "argocd" {
-  depends_on = [null_resource.ansible_setup_microk8s]
+  depends_on = [module.ansible_microk8s]  # Ensure Ansible creates the cluster first
   metadata {
     name = "argocd"
   }
@@ -61,7 +39,7 @@ resource "helm_release" "argocd" {
 }
 
 resource "kubernetes_namespace" "monitoring" {
-  depends_on = [null_resource.ansible_setup_microk8s]
+  depends_on = [module.ansible_microk8s]
   metadata {
     name = "monitoring"
   }
