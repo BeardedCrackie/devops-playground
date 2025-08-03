@@ -13,6 +13,6 @@ docker compose build
 kind load docker-image tasklist-backend:latest
 kind load docker-image tasklist-frontend:latest
 
-helm upgrade --install tasklist-app ../../infra/charts/tasklist
+helm upgrade --install tasklist-app ../../infra/apps/tasklist/helm
 
 kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80
