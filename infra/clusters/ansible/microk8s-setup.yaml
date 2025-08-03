@@ -26,6 +26,13 @@
         dest: "/home/{{ ansible_user }}/.kube/config"
         mode: '0600'
 
+    - name: Ensure kubeconfig directory exists
+      ansible.builtin.file:
+        path: ../k8s
+        state: directory
+        mode: '0777'  # Set permissions to make it writable
+      delegate_to: localhost
+
     - name: Copy kubeconfig to local machine
       become: false
       local_action: copy content="{{ kubeconfig_output.stdout }}" dest="../k8s/kubeconfig"

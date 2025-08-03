@@ -61,9 +61,11 @@ resource "null_resource" "ansible_setup_microk8s" {
 depends_on = [null_resource.ansible_inventory]
   provisioner "local-exec" {
     command = <<-EOT
-      ansible-playbook -i ../ansible/inventory.ini ../ansible/after-provision-setup.yaml \
+      # Activate Python virtual environment and run Ansible
+      source ../venv/bin/activate
+      ../venv/bin/ansible-playbook -i ../ansible/inventory.ini ../ansible/after-provision-setup.yaml \
         -e "ansible_ssh_extra_args='-o StrictHostKeyChecking=no'"
-      ansible-playbook -i ../ansible/inventory.ini ../ansible/microk8s-setup.yaml \
+      ../venv/bin/ansible-playbook -i ../ansible/inventory.ini ../ansible/microk8s-setup.yaml \
         -e "ansible_user=${var.vm_username}" 
     EOT
   }
