@@ -76,3 +76,7 @@ chmod 700 get_helm.sh
 ```
 kind create cluster
 ```
+
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+```

@@ -1,6 +1,5 @@
 import os
 from typing import Union
-from fastapi import FastAPI
 from prometheus_fastapi_instrumentator import Instrumentator
 import pika
 import motor.motor_asyncio
@@ -13,17 +12,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from celery import Celery
 from celery_worker import log_task_created  # import task
 from fastapi import BackgroundTasks
+from fastapi import FastAPI, WebSocket, HTTPException
 
-
-from fastapi import FastAPI, WebSocket
-from fastapi.websockets import WebSocketDisconnect
-
-app = FastAPI()
+app = FastAPI(root_path="/api")
 active_connections = []
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080", "http://127.0.0.1:8080"],  # Add both origins
+    allow_origins=["http://localhost:8081", "http://127.0.0.1:8081"],  # Add both origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

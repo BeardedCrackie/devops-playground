@@ -23,7 +23,8 @@ frontend:
     type: NodePort
     port: 80
   env:
-    API_URL: "http://tasklist-backend:8000" # Set your backend API URL here
+    API_URL: "http://localhost:8080/api" # Set your backend API URL here
+    WS_URL: "ws://localhost:8080/ws" # Set your WebSocket URL here  
   resources: {}
 celery:
   image:
@@ -69,3 +70,10 @@ mongo:
     enabled: true
     size: 1Gi
   resources: {}
+
+ingress:
+  enabled: true
+  className: "nginx"  # Specify your ingress class (e.g., nginx or other)
+  hosts:
+    - host: "localhost"  # Replace with your domain
+  tls: []  # Add TLS configuration if needed
