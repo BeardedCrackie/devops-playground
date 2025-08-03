@@ -7,6 +7,10 @@ terraform {
     kubernetes = {
       source = "hashicorp/kubernetes"
       version = "2.36.0"
+    } 
+    helm = {
+      source = "hashicorp/helm"
+      version = "3.0.2"
     }
   }
 }
@@ -27,7 +31,7 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  kubernetes {
+  kubernetes = {
     config_path = "../k8s/kubeconfig"
   }
 }
@@ -58,7 +62,7 @@ depends_on = [module.proxmox-ubuntu-vm]
 }
 
 resource "null_resource" "ansible_setup_microk8s" {
-depends_on = [null_resource.ansible_inventory]
+  depends_on = [null_resource.ansible_inventory]
   provisioner "local-exec" {
     command = <<-EOT
       # Activate Python virtual environment and run Ansible
@@ -66,29 +70,8 @@ depends_on = [null_resource.ansible_inventory]
       ../venv/bin/ansible-playbook -i ../ansible/inventory.ini ../ansible/after-provision-setup.yaml \
         -e "ansible_ssh_extra_args='-o StrictHostKeyChecking=no'"
       ../venv/bin/ansible-playbook -i ../ansible/inventory.ini ../ansible/microk8s-setup.yaml \
-        -e "ansible_user=${var.vm_username}" 
+        -e "ansible_user=${var.vm_username}"
     EOT
-  }
-}
-
-resource "kubernetes_namespace" "dev" {
-  depends_on = [null_resource.ansible_setup_microk8s]
-  metadata {
-    name = "dev"
-  }
-}
-
-resource "kubernetes_namespace" "stage" {
-  depends_on = [null_resource.ansible_setup_microk8s]
-  metadata {
-    name = "stage"
-  }
-}
-
-resource "kubernetes_namespace" "prod" {
-  depends_on = [null_resource.ansible_setup_microk8s]
-  metadata {
-    name = "prod"
   }
 }
 
