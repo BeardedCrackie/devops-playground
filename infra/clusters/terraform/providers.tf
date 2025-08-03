@@ -27,11 +27,11 @@ provider "proxmox" {
 }
 
 provider "kubernetes" {
-  config_path = "../k8s/kubeconfig"  # Path to the kubeconfig file from the VM
+  config_path = module.ansible_microk8s.kubeconfig_path
 }
 
 provider "helm" {
   kubernetes = {
-    config_path = "../k8s/kubeconfig"
+    config_path = module.ansible_microk8s.kubeconfig_path
   }
 }

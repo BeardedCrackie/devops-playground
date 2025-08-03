@@ -1,4 +1,3 @@
-
 resource "null_resource" "ansible_inventory" {
   provisioner "local-exec" {
     command = <<-EOT
@@ -25,4 +24,20 @@ resource "null_resource" "ansible_setup_microk8s" {
         -e "ansible_user=${var.vm_username}"
     EOT
   }
+}
+
+data "local_file" "kubeconfig" {
+  depends_on = [null_resource.ansible_setup_microk8s]
+  filename   = "../k8s/kubeconfig"
+}
+
+output "kubeconfig_path" {
+  value       = data.local_file.kubeconfig.filename
+  description = "Path to the generated kubeconfig file."
+}
+
+output "kubeconfig_content" {
+  value      = data.local_file.kubeconfig.content
+  sensitive  = true
+  description = "Kubeconfig file content as a string"
 }
