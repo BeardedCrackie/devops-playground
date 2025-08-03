@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: docker-build-push
+  namespace: devops
+spec:
+  params:
+    - name: git-url
+      description: "The Git repository URL"
+      type: string
+    - name: git-revision
+      description: "The Git branch or commit to checkout"
+      type: string
+    - name: image-name
+      description: "The name of the image to build"
+      type: string
+    - name: context
+      description: "The build context"
+      type: string
+    - name: registry-url
+      description: "The container registry URL"
+      type: string
+    - name: registry-username
+      description: "The container registry username"
+      type: string
+    - name: registry-password
+      description: "The container registry password"
+      type: string
+  steps:
+    - name: clone-repo
+      image: alpine/git
+      script: |
+        #!/bin/sh
+        echo "Cloning the repository"
+        git clone --branch $(params.git-revision) $(params.git-url) /workspace/source
+    - name: build-and-push
+      image: docker:20.10.7
+      script: |
+        #!/bin/sh
+        echo "Logging into the container registry"
+        echo "$REGISTRY_PASSWORD" | docker login $REGISTRY_URL -u $REGISTRY_USERNAME --password-stdin
+
+        echo "Building the image"
+        docker build -t $REGISTRY_URL/$IMAGE_NAME /workspace/source/$CONTEXT
+
+        echo "Pushing the image"
+        docker push $REGISTRY_URL/$IMAGE_NAME
+      env:
+        - name: REGISTRY_URL
+          value: "$(params.registry-url)"
+        - name: REGISTRY_USERNAME
+          value: "$(params.registry-username)"
+        - name: REGISTRY_PASSWORD
+          value: "$(params.registry-password)"
+        - name: IMAGE_NAME
+          value: "$(params.image-name)"
+        - name: CONTEXT
+          value: "$(params.context)"

@@ -1,0 +1,53 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: tasklist-build-pipeline
+  namespace: devops
+spec:
+  params:
+    - name: registry-url
+      description: "The container registry URL"
+      type: string
+    - name: registry-username
+      description: "The container registry username"
+      type: string
+    - name: registry-password
+      description: "The container registry password"
+      type: string
+  tasks:
+    - name: build-backend
+      taskRef:
+        name: docker-build-push
+      params:
+        - name: git-url
+          value: "https://github.com/BeardedCrackie/devops-playground.git"
+        - name: git-revision
+          value: "feat/tasklist-deploy"
+        - name: image-name
+          value: "tasklist-backend:$(cat apps/tasklist/app-be/VERSION)"
+        - name: context
+          value: "apps/tasklist/app-be"
+        - name: registry-url
+          value: "$(params.registry-url)"
+        - name: registry-username
+          value: "$(params.registry-username)"
+        - name: registry-password
+          value: "$(params.registry-password)"
+    - name: build-frontend
+      taskRef:
+        name: docker-build-push
+      params:
+        - name: git-url
+          value: "https://github.com/BeardedCrackie/devops-playground.git"
+        - name: git-revision
+          value: "feat/tasklist-deploy"
+        - name: image-name
+          value: "tasklist-frontend:$(cat apps/tasklist/app-fe/VERSION)"
+        - name: context
+          value: "apps/tasklist/app-fe"
+        - name: registry-url
+          value: "$(params.registry-url)"
+        - name: registry-username
+          value: "$(params.registry-username)"
+        - name: registry-password
+          value: "$(params.registry-password)"

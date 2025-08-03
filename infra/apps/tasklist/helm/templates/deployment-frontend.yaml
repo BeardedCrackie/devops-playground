@@ -20,4 +20,9 @@ spec:
           imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
           ports:
             - containerPort: 80
+          env:
+            - name: API_URL
+              value: {{ .Values.frontend.env.API_URL | quote }}
+            - name: WS_URL
+              value: {{ .Values.frontend.env.WS_URL | quote }}
           resources: {{- toYaml .Values.frontend.resources | nindent 12 }}

@@ -1,14 +1,14 @@
 backend:
   image:
-    repository: "localhost:32000/tasklist-backend"
+    repository: "tasklist-backend"
     tag: latest
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 8000
   env:
-    MONGO_URI: "mongodb://mongo:27017"
-    RABBITMQ_HOST: rabbitmq
+    MONGO_URI: "mongodb://tasklist-mongo:27017"
+    RABBITMQ_HOST: tasklist-rabbitmq
     RABBITMQ_PORT: 5672
     RABBITMQ_USER: "user"
     RABBITMQ_PASS: "pass"
@@ -16,22 +16,24 @@ backend:
 
 frontend:
   image:
-    repository: "localhost:32000/tasklist-frontend"
+    repository: "tasklist-frontend"
     tag: latest
     pullPolicy: IfNotPresent
   service:
     type: NodePort
     port: 80
+  env:
+    API_URL: "http://localhost:8080/api" # Set your backend API URL here
+    WS_URL: "ws://localhost:8080/ws" # Set your WebSocket URL here  
   resources: {}
-
 celery:
   image:
-    repository: "localhost:32000/tasklist-backend"
+    repository: "tasklist-backend"
     tag: latest
     pullPolicy: IfNotPresent
   command: ["celery", "-A", "celery_worker.celery_app", "worker", "--loglevel=info"]
   env:
-    RABBITMQ_HOST: rabbitmq
+    RABBITMQ_HOST: tasklist-rabbitmq
     RABBITMQ_PORT: 5672
     RABBITMQ_USER: "user"
     RABBITMQ_PASS: "pass"
@@ -68,3 +70,10 @@ mongo:
     enabled: true
     size: 1Gi
   resources: {}
+
+ingress:
+  enabled: true
+  className: "nginx"  # Specify your ingress class (e.g., nginx or other)
+  hosts:
+    - host: "localhost"  # Replace with your domain
+  tls: []  # Add TLS configuration if needed
