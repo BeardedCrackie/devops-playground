@@ -12,9 +12,9 @@ python3 -m venv $INFRA_DIR/venv
 # Activate the virtual environment
 source $INFRA_DIR/venv/bin/activate
 
-# Upgrade pip and install Ansible
+# Upgrade pip and install Ansible and Kubernetes Python client
 pip install --upgrade pip
-pip install ansible
+pip install ansible kubernetes
 
 # Install Ansible roles
 ansible-galaxy install -r $SCRIPT_DIR/requirements.yml
