@@ -50,3 +50,5 @@ inventory.ini
 kubeconfig
 
 remote.tf
+
+inventory.yaml
