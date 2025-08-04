@@ -44,17 +44,19 @@ resource "null_resource" "ansible_kubeconfig" {
       source ../venv/bin/activate
       ../venv/bin/ansible-playbook -i ../ansible/inventory.ini ../ansible/microk8s-kubeconfig.yaml \
         -e "ansible_user=${var.vm_username}"
+      # Copy kubeconfig to module directory
+      cp ../../ansible/kubeconfig ${path.module}/../kubeconfig
     EOT
   }
 }
 
 data "local_file" "kubeconfig" {
   depends_on = [null_resource.ansible_kubeconfig]
-  filename   = "kubeconfig"
+  filename   = "${path.module}/kubeconfig"
 }
 
 output "kubeconfig_path" {
-  value       = data.local_file.kubeconfig.filename
+  value       = abspath(data.local_file.kubeconfig.filename)
   description = "Path to the generated kubeconfig file."
 }
 

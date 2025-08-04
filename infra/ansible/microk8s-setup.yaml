@@ -3,6 +3,7 @@
   roles:
     - role: istvano.microk8s
       vars:
+        microk8s_version: "1.33/stable"
         microk8s_plugins:
           dns: "8.8.8.8"
           istio: true
