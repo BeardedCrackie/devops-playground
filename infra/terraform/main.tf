@@ -7,16 +7,3 @@ module "proxmox-ubuntu-vm" {
   public_key = local.public_key_content
   vm_username = var.vm_username
 }
-
-module "ansible_microk8s" {
-  source = "./modules/ansible-microk8s"
-  vm_username = var.vm_username
-  priv_key_path = var.priv_key_path
-  vm_ips = module.proxmox-ubuntu-vm.ipv4_address
-  depends_on = [module.proxmox-ubuntu-vm]
-}
-
-module "apps_init" {
-  source = "./modules/apps-init"
-  depends_on = [module.ansible_microk8s]
-}
