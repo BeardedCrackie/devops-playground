@@ -1,19 +1,23 @@
 #!/bin/bash
 
+# Get the directory of this script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+INFRA_DIR="$SCRIPT_DIR/.."
+
 sudo apt install python3.12-venv curl unzip
 
 # Create a Python virtual environment in the ansible folder
-python3 -m venv ../venv
+python3 -m venv $INFRA_DIR/venv
 
 # Activate the virtual environment
-source ../venv/bin/activate
+source $INFRA_DIR/venv/bin/activate
 
 # Upgrade pip and install Ansible
 pip install --upgrade pip
 pip install ansible
 
 # Install Ansible roles
-ansible-galaxy install -r requirements.yml
+ansible-galaxy install -r $SCRIPT_DIR/requirements.yml
 
 # Download and install Terraform CLI in the virtualenv's bin folder
 TERRAFORM_VERSION="1.12.2"
