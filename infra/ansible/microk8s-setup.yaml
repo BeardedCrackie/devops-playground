@@ -21,19 +21,35 @@
       hostname:
         name: "{{ inventory_hostname }}"  # Use the hostname from the inventory or define it
     
+    - name: Check if kubeconfig exists locally
+      become: false
+      local_action:
+        module: stat
+        args:
+          path: ~/.kube/microk8s_config
+      register: kubeconfig_local_stat
+      delegate_to: localhost
+
     - name: Generate kubeconfig from microk8s
       command: microk8s config
       register: kubeconfig_output
+      when: not kubeconfig_local_stat.stat.exists
 
     - name: Save kubeconfig to file on remote
       copy:
         content: "{{ kubeconfig_output.stdout }}"
         dest: "/home/{{ ansible_user }}/.kube/config"
         mode: '0600'
+      when: not kubeconfig_local_stat.stat.exists
 
-    - name: Copy kubeconfig to local machine
+    - name: Copy kubeconfig to local machine if not present
       become: false
-      local_action: copy content="{{ kubeconfig_output.stdout }}" dest="../terraform/kubeconfig"
+      local_action:
+        module: copy
+        args:
+          content: "{{ kubeconfig_output.stdout }}"
+          dest: ~/.kube/microk8s_config
+      when: not kubeconfig_local_stat.stat.exists
       delegate_to: localhost
 
     - name: Add alias kubectl to .bashrc
