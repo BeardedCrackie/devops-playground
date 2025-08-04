@@ -1,6 +1,6 @@
-variable "image_url" {
-    type = string
-    default = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+variable "image_id" {
+  type        = string
+  description = "ID of the downloaded image file to use for VM disk."
 }
 
 variable "vm_name" {

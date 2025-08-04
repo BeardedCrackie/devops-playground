@@ -30,9 +30,9 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
 
   disk {
     datastore_id = var.pve_datastore_id
-    file_id      = proxmox_virtual_environment_download_file.image.id
+    file_id      = var.image_id
     interface    = "virtio0"
-    file_format = "raw"
+    file_format  = "raw"
     iothread     = true
     discard      = "on"
     size         = 20
@@ -63,14 +63,6 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
   }
 }
 
-resource "proxmox_virtual_environment_download_file" "image" {
-  content_type = "iso"
-  datastore_id = "local"
-  file_name    = "${var.vm_name}.img"
-  node_name    = var.pve_node_name
-  url          = var.image_url
-  overwrite = false
-}
 
 resource "proxmox_virtual_environment_file" "cloud_config" {
   content_type = "snippets"
