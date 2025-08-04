@@ -1,7 +1,6 @@
 
 resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
-  count      = var.vm_count
-  name       = "${var.vm_name}-${count.index + 1}"
+  name       = "${var.vm_name}"
   description = "Managed by Terraform"
   tags        = ["terraform", "ubuntu", "ansible", "microk8s"]
   started = true
@@ -31,9 +30,9 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
 
   disk {
     datastore_id = var.pve_datastore_id
-    file_id      = proxmox_virtual_environment_download_file.image.id
+    file_id      = var.image_id
     interface    = "virtio0"
-    file_format = "raw"
+    file_format  = "raw"
     iothread     = true
     discard      = "on"
     size         = 20
@@ -43,10 +42,10 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
     datastore_id = var.pve_datastore_id
     ip_config {
       ipv4 {
-        address = "dhcp"
+        address = var.ip_type == "dhcp" ? "dhcp" : var.static_ip_address
+        gateway = var.ip_type == "dhcp" ? null : var.gateway
       }
     }
-    
     user_data_file_id = proxmox_virtual_environment_file.cloud_config.id
   }
 
@@ -64,14 +63,6 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
   }
 }
 
-resource "proxmox_virtual_environment_download_file" "image" {
-  content_type = "iso"
-  datastore_id = "local"
-  file_name    = "${var.vm_name}.img"
-  node_name    = var.pve_node_name
-  url          = var.image_url
-  overwrite = false
-}
 
 resource "proxmox_virtual_environment_file" "cloud_config" {
   content_type = "snippets"
@@ -79,9 +70,10 @@ resource "proxmox_virtual_environment_file" "cloud_config" {
   node_name    = var.pve_node_name
 
   source_raw {
-    #hostname: ${var.vm_name}-${vm_count.index + 1}
+    #hostname: ${var.vm_name}
     data = <<-EOF
     #cloud-config
+    hostname: ${var.vm_name}
     users:
       - default
       - name: ${var.vm_username}
@@ -100,6 +92,6 @@ resource "proxmox_virtual_environment_file" "cloud_config" {
         - systemctl start qemu-guest-agent >> /tmp/cloud-config
         - echo "done" > /tmp/cloud-config.done
     EOF
-    file_name = "cloud-config.yaml"
+    file_name = "${var.vm_name}-cloud-config.yaml"
   }
 }

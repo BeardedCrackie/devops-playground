@@ -3,6 +3,7 @@
   roles:
     - role: istvano.microk8s
       vars:
+        microk8s_version: "1.33/stable"
         microk8s_plugins:
           dns: "8.8.8.8"
           istio: true
@@ -14,21 +15,41 @@
           - "{{ ansible_user }}"
         microk8s_enable_HA: true # enable high-availability?
         microk8s_group_HA: "microk8s" # hostgroup whose members will form high-availability cluster
-
+  
   tasks:
+    - name: Set the hostname
+      hostname:
+        name: "{{ inventory_hostname }}"  # Use the hostname from the inventory or define it
+    
+    - name: Check if kubeconfig exists locally
+      become: false
+      local_action:
+        module: stat
+        args:
+          path: ~/.kube/microk8s_config
+      register: kubeconfig_local_stat
+      delegate_to: localhost
+
     - name: Generate kubeconfig from microk8s
       command: microk8s config
       register: kubeconfig_output
+      when: not kubeconfig_local_stat.stat.exists
 
     - name: Save kubeconfig to file on remote
       copy:
         content: "{{ kubeconfig_output.stdout }}"
         dest: "/home/{{ ansible_user }}/.kube/config"
         mode: '0600'
+      when: not kubeconfig_local_stat.stat.exists
 
-    - name: Copy kubeconfig to local machine
+    - name: Copy kubeconfig to local machine if not present
       become: false
-      local_action: copy content="{{ kubeconfig_output.stdout }}" dest="../k8s/kubeconfig"
+      local_action:
+        module: copy
+        args:
+          content: "{{ kubeconfig_output.stdout }}"
+          dest: ~/.kube/microk8s_config
+      when: not kubeconfig_local_stat.stat.exists
       delegate_to: localhost
 
     - name: Add alias kubectl to .bashrc

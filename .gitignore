@@ -1,2 +1,5 @@
 # Local .terraform directories
 !infra/clusters/.gitignore
+
+# Ignore Python virtual environment
+venv/

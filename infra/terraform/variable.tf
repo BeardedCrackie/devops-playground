@@ -42,3 +42,8 @@ variable "public_key_path" {
 locals {
   public_key_content = file(pathexpand(var.public_key_path))
 }
+
+variable "image_url" {
+    type = string
+    default = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+}
