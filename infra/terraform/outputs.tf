@@ -12,17 +12,3 @@ output "ansible_inventory" {
   EOT
   sensitive = true  # Optional: Hide inventory from Terraform CLI output
 }
-
-output "argocd_initial_password" {
-  value = <<EOT
-  To get the ArgoCD admin password, run:
-  kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode
-  EOT
-}
-
-output "grafana_initial_password" {
-  value = <<EOT
-  To get the Grafana admin password, run:
-  kubectl get secret --namespace monitoring prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
-  EOT
-}
