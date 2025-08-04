@@ -43,10 +43,10 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
     datastore_id = var.pve_datastore_id
     ip_config {
       ipv4 {
-        address = "dhcp"
+        address = var.ip_type == "dhcp" ? "dhcp" : var.static_ip_address
+        gateway = var.ip_type == "dhcp" ? null : var.gateway
       }
     }
-    
     user_data_file_id = proxmox_virtual_environment_file.cloud_config.id
   }
 

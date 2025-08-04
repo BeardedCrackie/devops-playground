@@ -1,4 +1,3 @@
-
 variable "image_url" {
     type = string
     default = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
@@ -47,4 +46,22 @@ variable "pve_datastore_id" {
 variable "pve_node_name" {
     type = string
     default = "proxmox"
+}
+
+variable "ip_type" {
+  description = "Type of IP assignment: 'dhcp' or 'static'"
+  type        = string
+  default     = "dhcp"
+}
+
+variable "static_ip_address" {
+  description = "Static IP address with CIDR"
+  type        = string
+  default     = ""
+}
+
+variable "gateway" {
+  description = "Gateway for static IP"
+  type        = string
+  default     = ""
 }
