@@ -73,6 +73,7 @@ resource "proxmox_virtual_environment_file" "cloud_config" {
     #hostname: ${var.vm_name}
     data = <<-EOF
     #cloud-config
+    hostname: ${var.vm_name}
     users:
       - default
       - name: ${var.vm_username}
@@ -91,6 +92,6 @@ resource "proxmox_virtual_environment_file" "cloud_config" {
         - systemctl start qemu-guest-agent >> /tmp/cloud-config
         - echo "done" > /tmp/cloud-config.done
     EOF
-    file_name = "cloud-config.yaml"
+    file_name = "${var.vm_name}-cloud-config.yaml"
   }
 }
