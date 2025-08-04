@@ -1,7 +1,6 @@
 
 resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
-  count      = var.vm_count
-  name       = "${var.vm_name}-${count.index + 1}"
+  name       = "${var.vm_name}"
   description = "Managed by Terraform"
   tags        = ["terraform", "ubuntu", "ansible", "microk8s"]
   started = true
@@ -79,7 +78,7 @@ resource "proxmox_virtual_environment_file" "cloud_config" {
   node_name    = var.pve_node_name
 
   source_raw {
-    #hostname: ${var.vm_name}-${vm_count.index + 1}
+    #hostname: ${var.vm_name}
     data = <<-EOF
     #cloud-config
     users:
