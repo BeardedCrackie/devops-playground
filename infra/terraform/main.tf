@@ -28,4 +28,5 @@ module "proxmox-ubuntu-vm" {
   ip_type     = "static"
   image_id    = proxmox_virtual_environment_download_file.image.id
   gateway     = "192.168.0.1"
+  pve_datastore_id = var.virtual_environment.datastore_id
 }
