@@ -1,1 +1,8 @@
-- src: istvano.microk8s
+
+# Ansible roles
+roles:
+  - src: istvano.microk8s
+
+# Ansible collections
+collections:
+  - name: kubernetes.core

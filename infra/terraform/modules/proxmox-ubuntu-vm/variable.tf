@@ -65,3 +65,15 @@ variable "gateway" {
   type        = string
   default     = ""
 }
+
+variable "dns_domain" {
+  description = "DNS search domain for the VM."
+  type        = string
+  default     = "local"
+}
+
+variable "dns_servers" {
+  description = "List of DNS servers for the VM."
+  type        = list(string)
+  default     = ["8.8.8.8"]
+}
