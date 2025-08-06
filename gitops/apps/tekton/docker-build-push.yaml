@@ -20,7 +20,7 @@ spec:
     - name: registry-url
       description: "The container registry URL"
       type: string
-      default: "registry.registry.svc.cluster.local:5000" 
+      default: "zot-registry.registry.svc.cluster.local:5000" 
     - name: registry-password
       type: string
       default: "" 
