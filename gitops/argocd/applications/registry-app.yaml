@@ -7,23 +7,36 @@ spec:
   project: default
   source:
     repoURL: http://zotregistry.dev/helm-charts
-    targetRevision: "v2.1.7"
     chart: zot
+    targetRevision: 2.1.7
     helm:
       values: |
-        # You can override values here if needed
+        persistence:
+          enabled: true
+          accessMode: ReadWriteOnce
+          size: 10Gi
+          storageClass: standard
+
         service:
           type: ClusterIP
-        ingress:
-          enabled: true
-          hosts:
-            - zot-registry.local
+          port: 5000
+
+        config:
+          http:
+            address: "0.0.0.0"
+            port: 5000
+          storage:
+            rootDirectory: /var/lib/zot
+          log:
+            level: info
+
   destination:
     server: https://kubernetes.default.svc
-    namespace: registry
+    namespace: zot
+
   syncPolicy:
     automated:
-      prune: true
       selfHeal: true
+      prune: true
     syncOptions:
       - CreateNamespace=true
