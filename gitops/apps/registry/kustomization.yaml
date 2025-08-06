@@ -3,10 +3,10 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
-  - zot-config.yaml
-  - zot-deployment.yaml
-  - zot-service.yaml
-  - zot-ingress.yaml
+  - config.yaml
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml
 
 namePrefix: ""
 namespace: registry
