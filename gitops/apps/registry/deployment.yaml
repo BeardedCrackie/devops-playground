@@ -1,27 +1,46 @@
-# docker-registry.yaml
+# Zot OCI registry deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: registry
+  name: zot-registry
   namespace: registry
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: registry
+      app: zot-registry
   template:
     metadata:
       labels:
-        app: registry
+        app: zot-registry
     spec:
       containers:
-        - name: registry
-          image: registry:2
+        - name: zot
+          image: ghcr.io/project-zot/zot:latest
           ports:
             - containerPort: 5000
+          env:
+            - name: ZOT_LOG_LEVEL
+              value: "debug"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
           volumeMounts:
-            - name: registry-storage
+            - name: zot-config
+              mountPath: /etc/zot
+            - name: zot-storage
               mountPath: /var/lib/registry
+          command:
+            - /usr/bin/zot
+            - serve
+            - /etc/zot/config.json
       volumes:
-        - name: registry-storage
+        - name: zot-config
+          configMap:
+            name: zot-config
+        - name: zot-storage
           emptyDir: {}
