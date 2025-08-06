@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/BeardedCrackie/devops-playground.git
     targetRevision: HEAD
-    path: gitops/apps/tasklist/kustomize
+    path: gitops/apps/tasklist/kustomize/base
   destination:
     server: https://kubernetes.default.svc
     namespace: tasklist
