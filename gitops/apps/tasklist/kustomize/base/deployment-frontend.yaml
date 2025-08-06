@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasklist-frontend
+  labels:
+    app: tasklist-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tasklist-frontend
+  template:
+    metadata:
+      labels:
+        app: tasklist-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: tasklist-frontend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          env:
+            - name: API_URL
+              value: "http://localhost:8080/api"
+            - name: WS_URL
+              value: "ws://localhost:8080/ws"

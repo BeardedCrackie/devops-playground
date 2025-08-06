@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasklist-backend
+  labels:
+    app: tasklist-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tasklist-backend
+  template:
+    metadata:
+      labels:
+        app: tasklist-backend
+    spec:
+      containers:
+        - name: backend
+          image: tasklist-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MONGO_URI
+              value: "mongodb://tasklist-mongo:27017"
+            - name: RABBITMQ_HOST
+              value: "tasklist-rabbitmq"
+            - name: RABBITMQ_PORT
+              value: "5672"
+            - name: RABBITMQ_USER
+              value: "user"
+            - name: RABBITMQ_PASS
+              value: "pass"
