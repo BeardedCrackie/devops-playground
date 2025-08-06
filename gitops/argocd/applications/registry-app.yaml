@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: http://zotregistry.dev/helm-charts
     chart: zot
-    targetRevision: 2.1.7
+    targetRevision: 0.1.78
     helm:
       values: |
         persistence:
