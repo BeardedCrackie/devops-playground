@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: http://zotregistry.dev/helm-charts
-    targetRevision: "latest"
+    targetRevision: "v2.1.7"
     chart: zot
     helm:
       values: |
