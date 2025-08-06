@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tekton-app
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: tekton
+    app.kubernetes.io/part-of: devops-playground
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/BeardedCrackie/devops-playground.git
+    targetRevision: HEAD
+    path: gitops/apps/tekton
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tekton-pipelines
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
