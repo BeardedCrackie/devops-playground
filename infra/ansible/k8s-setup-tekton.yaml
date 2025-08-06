@@ -1,0 +1,14 @@
+- name: Install Tekton
+  hosts: localhost
+  gather_facts: false
+  collections:
+    - kubernetes.core
+  vars:
+    kubeconfig: ~/.kube/microk8s_config
+  tasks:
+
+    - name: Install Takton manifests
+      k8s:
+        state: present
+        src: https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+        kubeconfig: "{{ kubeconfig }}"

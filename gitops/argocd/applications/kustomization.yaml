@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: argocd-applications
+
+resources:
+  - tasklist-app.yaml
+  - tasklist-pipeline.yaml
+  - registry-app.yaml
+  - tekton-app.yaml
+
+commonLabels:
+  managed-by: argocd
+  environment: production
+
+commonAnnotations:
+  argocd.argoproj.io/managed: "true"

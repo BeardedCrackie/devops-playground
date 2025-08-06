@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: registry-app
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: registry
+    app.kubernetes.io/part-of: devops-playground
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/BeardedCrackie/devops-playground.git
+    targetRevision: HEAD
+    path: gitops/apps/registry
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: registry
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

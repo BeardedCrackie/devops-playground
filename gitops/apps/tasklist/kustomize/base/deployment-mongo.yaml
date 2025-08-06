@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasklist-mongo
+  labels:
+    app: tasklist-mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tasklist-mongo
+  template:
+    metadata:
+      labels:
+        app: tasklist-mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-storage
+              mountPath: /data/db
+      volumes:
+        - name: mongo-storage
+          persistentVolumeClaim:
+            claimName: tasklist-mongo-pvc

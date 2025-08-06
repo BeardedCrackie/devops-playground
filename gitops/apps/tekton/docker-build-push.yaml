@@ -20,31 +20,82 @@ spec:
     - name: registry-url
       description: "The container registry URL"
       type: string
-    - name: registry-username
-      description: "The container registry username"
-      type: string
+      default: "registry.registry.svc.cluster.local:5000" 
     - name: registry-password
-      description: "The container registry password"
       type: string
+      default: "" 
+    - name: registry-username
+      type: string
+      default: "" 
   steps:
     - name: clone-repo
       image: alpine/git
       script: |
         #!/bin/sh
         echo "Cloning the repository"
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
         git clone --branch $(params.git-revision) $(params.git-url) /workspace/source
     - name: build-and-push
-      image: docker:20.10.7
+      image: quay.io/buildah/stable:latest
+      securityContext:
+        privileged: true
       script: |
         #!/bin/sh
-        echo "Logging into the container registry"
-        echo "$REGISTRY_PASSWORD" | docker login $REGISTRY_URL -u $REGISTRY_USERNAME --password-stdin
-
-        echo "Building the image"
-        docker build -t $REGISTRY_URL/$IMAGE_NAME /workspace/source/$CONTEXT
-
-        echo "Pushing the image"
-        docker push $REGISTRY_URL/$IMAGE_NAME
+        set -e
+        
+        # Read version(s) from VERSION file
+        if [ -f "/workspace/source/$CONTEXT/VERSION" ]; then
+          VERSIONS=$(cat "/workspace/source/$CONTEXT/VERSION" | tr -d '\r' | tr '\n' ' ')
+          echo "Found VERSION file with tags: $VERSIONS"
+          
+          # Build tags arguments and collect all tags for pushing
+          TAG_ARGS=""
+          ALL_TAGS="$VERSIONS latest"
+          
+          for version in $VERSIONS; do
+            if [ ! -z "$version" ]; then
+              TAG_ARGS="$TAG_ARGS -t $REGISTRY_URL/$IMAGE_NAME:$version"
+              echo "Will tag with: $version"
+            fi
+          done
+          
+          # Always add latest tag
+          TAG_ARGS="$TAG_ARGS -t $REGISTRY_URL/$IMAGE_NAME:latest"
+          echo "Will tag with: latest"
+        else
+          echo "No VERSION file found, using only latest tag"
+          TAG_ARGS="-t $REGISTRY_URL/$IMAGE_NAME:latest"
+          ALL_TAGS="latest"
+        fi
+        
+        echo "Configuring Buildah for insecure (HTTP) registry"
+        mkdir -p /etc/containers
+        cat <<EOF > /etc/containers/registries.conf
+        
+        [registries.insecure]
+        registries = ["$REGISTRY_URL"]
+        EOF
+        
+        # Check if registry username is provided and login if needed
+        if [ ! -z "$REGISTRY_USERNAME" ]; then
+          echo "Logging into the container registry"
+          buildah login -u "$REGISTRY_USERNAME" -p "$REGISTRY_PASSWORD" "$REGISTRY_URL"
+        else
+          echo "No registry credentials provided, skipping login"
+        fi
+        
+        echo "Building the image with all tags from VERSION file plus latest"
+        buildah bud --tls-verify=false \
+          $TAG_ARGS \
+          -f "/workspace/source/$CONTEXT/Dockerfile" "/workspace/source/$CONTEXT"
+        
+        echo "Pushing the image with all tags"
+        for tag in $ALL_TAGS; do
+          if [ ! -z "$tag" ]; then
+            echo "Pushing tag: $tag"
+            buildah push --tls-verify=false "$REGISTRY_URL/$IMAGE_NAME:$tag"
+          fi
+        done
       env:
         - name: REGISTRY_URL
           value: "$(params.registry-url)"
@@ -56,3 +107,9 @@ spec:
           value: "$(params.image-name)"
         - name: CONTEXT
           value: "$(params.context)"
+        - name: GIT_REVISION
+          value: "$(params.git-revision)"
+  volumes:
+    - name: git-ssh-key
+      secret:
+        secretName: git-deploy-key-secret
