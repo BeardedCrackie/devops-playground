@@ -4,16 +4,6 @@ metadata:
   name: tasklist-build-pipeline
   namespace: devops
 spec:
-  params:
-    - name: registry-url
-      description: "The container registry URL"
-      type: string
-    - name: registry-username
-      description: "The container registry username"
-      type: string
-    - name: registry-password
-      description: "The container registry password"
-      type: string
   tasks:
     - name: build-backend
       taskRef:
@@ -27,12 +17,6 @@ spec:
           value: "tasklist-backend"
         - name: context
           value: "apps/tasklist/app-be"
-        - name: registry-url
-          value: "$(params.registry-url)"
-        - name: registry-username
-          value: "$(params.registry-username)"
-        - name: registry-password
-          value: "$(params.registry-password)"
     - name: build-frontend
       taskRef:
         name: docker-build-push
@@ -45,9 +29,3 @@ spec:
           value: "tasklist-frontend"
         - name: context
           value: "apps/tasklist/app-fe"
-        - name: registry-url
-          value: "$(params.registry-url)"
-        - name: registry-username
-          value: "$(params.registry-username)"
-        - name: registry-password
-          value: "$(params.registry-password)"
