@@ -1,4 +1,4 @@
-FROM nginx:alpine
+FROM docker.io/nginx:alpine
 
 # Copy static files
 COPY index.html /usr/share/nginx/html/index.html
