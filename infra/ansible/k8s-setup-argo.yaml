@@ -20,3 +20,9 @@
         namespace: argocd
         src: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
         kubeconfig: "{{ kubeconfig }}"
+
+    - name: Install Argo root application manifests
+      k8s:
+        state: present
+        src: ../../gitops/argocd/root-app.yaml
+        kubeconfig: "{{ kubeconfig }}"
