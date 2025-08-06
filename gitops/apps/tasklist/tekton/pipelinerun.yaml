@@ -1,0 +1,8 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: tasklist-build-pipeline-run
+  namespace: devops
+spec:
+  pipelineRef:
+    name: tasklist-build-pipeline
