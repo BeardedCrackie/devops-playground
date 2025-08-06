@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: tasklist-frontend:latest
+          image: registry.registry.svc.cluster.local:5000/tasklist-frontend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
