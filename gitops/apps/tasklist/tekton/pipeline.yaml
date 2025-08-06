@@ -22,9 +22,9 @@ spec:
         - name: git-url
           value: "https://github.com/BeardedCrackie/devops-playground.git"
         - name: git-revision
-          value: "feat/tasklist-deploy"
+          value: "main"
         - name: image-name
-          value: "tasklist-backend:$(cat apps/tasklist/app-be/VERSION)"
+          value: "tasklist-backend"
         - name: context
           value: "apps/tasklist/app-be"
         - name: registry-url
@@ -40,9 +40,9 @@ spec:
         - name: git-url
           value: "https://github.com/BeardedCrackie/devops-playground.git"
         - name: git-revision
-          value: "feat/tasklist-deploy"
+          value: "main"
         - name: image-name
-          value: "tasklist-frontend:$(cat apps/tasklist/app-fe/VERSION)"
+          value: "tasklist-frontend"
         - name: context
           value: "apps/tasklist/app-fe"
         - name: registry-url

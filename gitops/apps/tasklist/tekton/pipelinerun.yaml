@@ -1,0 +1,15 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: tasklist-build-pipeline-run
+  namespace: devops
+spec:
+  pipelineRef:
+    name: tasklist-build-pipeline
+  params:
+    - name: registry-url
+      value: "registry.registry.svc.cluster.local:5000"
+    - name: registry-username
+      value: ""
+    - name: registry-password
+      value: ""
