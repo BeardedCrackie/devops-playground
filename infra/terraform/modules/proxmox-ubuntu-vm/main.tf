@@ -11,6 +11,7 @@ resource "proxmox_virtual_environment_vm" "ubuntu_vm" {
 
   cpu {
     cores = var.cpu_cores
+    type         = "host"
   }
 
   memory {
