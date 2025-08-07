@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: celery
-          image: registry-app-zot.zot.svc.cluster.local:5000/tasklist-backend:latest
+          image: localhost:5000/tasklist-backend:latest
           imagePullPolicy: IfNotPresent
           command: ["celery", "-A", "celery_worker.celery_app", "worker", "--loglevel=info"]
           env:
