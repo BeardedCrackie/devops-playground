@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: celery
-          image: localhost:5000/tasklist-backend:latest
+          image: localhost:30500/tasklist-backend:latest
           imagePullPolicy: IfNotPresent
           command: ["celery", "-A", "celery_worker.celery_app", "worker", "--loglevel=info"]
           env:
