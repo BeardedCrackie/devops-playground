@@ -1,5 +1,8 @@
 - hosts: microk8s
   become: true
+  vars:
+    kubeconfig: ~/.kube/microk8s_config
+
   roles:
     - role: istvano.microk8s
       vars:
@@ -30,3 +33,18 @@
       debug:
         var: metallb_result.stdout
       run_once: true
+
+    - name: Create ConfigMap for ingress host
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: ingress-host-config
+            namespace: default
+          data:
+            hostname: "{{ ingress_host }}"
+        kubeconfig: "{{ kubeconfig }}"
+      run_once: true
+      delegate_to: localhost
