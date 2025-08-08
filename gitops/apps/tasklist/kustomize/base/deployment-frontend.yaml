@@ -22,6 +22,6 @@ spec:
             - containerPort: 80
           env:
             - name: API_URL
-              value: "http://192.168.0.41/api"
+              value: "http://tasklist.k8s.local/api"
             - name: WS_URL
-              value: "ws://192.168.0.41/ws"
+              value: "ws://tasklist.k8s.local/ws"
