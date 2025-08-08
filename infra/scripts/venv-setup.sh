@@ -34,6 +34,29 @@ rm /tmp/${TERRAFORM_ZIP}
 # Test Terraform install
 terraform version
 
+
+KUSTOMIZE_VERSION="v5.7.1"
+KUSTOMIZE_TAR="kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
+KUSTOMIZE_URL="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/${KUSTOMIZE_TAR}"
+VENV_BIN="../venv/bin"   # Adjust to your venv bin folder
+
+echo "Installing kustomize ${KUSTOMIZE_VERSION}..."
+
+curl -fsSLo /tmp/${KUSTOMIZE_TAR} ${KUSTOMIZE_URL}
+
+# Extract kustomize binary from the tar.gz (it contains just one file named 'kustomize')
+tar -xzf /tmp/${KUSTOMIZE_TAR} -C /tmp/
+
+# Move binary to venv bin
+mv /tmp/kustomize ${VENV_BIN}/
+chmod +x ${VENV_BIN}/kustomize
+
+# Clean up
+rm /tmp/${KUSTOMIZE_TAR}
+
+echo "kustomize installed to ${VENV_BIN}/kustomize"
+
+
 # Deactivate the virtual environment
 deactivate
 

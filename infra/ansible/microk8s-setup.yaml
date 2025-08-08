@@ -1,5 +1,8 @@
 - hosts: microk8s
   become: true
+  vars:
+    kubeconfig: ~/.kube/microk8s_config
+
   roles:
     - role: istvano.microk8s
       vars:
@@ -15,3 +18,33 @@
           - "{{ ansible_user }}"
         microk8s_enable_HA: true # enable high-availability?
         microk8s_group_HA: "microk8s" # hostgroup whose members will form high-availability cluster
+        
+  tasks:
+    - name: Wait for MicroK8s to be ready
+      command: microk8s status --wait-ready
+
+    - name: Enable MetalLB with specific IP range
+      command: microk8s enable metallb:{{ load_balancer_ip_ranges }}
+      register: metallb_result
+      changed_when: "'already enabled' not in metallb_result.stdout"
+      run_once: true
+
+    - name: Show MetalLB enable message
+      debug:
+        var: metallb_result.stdout
+      run_once: true
+
+    - name: Create ConfigMap for ingress host
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: ingress-host-config
+            namespace: default
+          data:
+            hostname: "{{ ingress_host }}"
+        kubeconfig: "{{ kubeconfig }}"
+      run_once: true
+      delegate_to: localhost

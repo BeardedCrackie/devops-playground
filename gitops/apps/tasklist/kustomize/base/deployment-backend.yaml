@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: localhost:30500/tasklist-backend:latest
+          image: registry.k8s.local/tasklist-backend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
