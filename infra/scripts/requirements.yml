@@ -6,3 +6,4 @@ roles:
 # Ansible collections
 collections:
   - name: kubernetes.core
+  - name: community.kubernetes
