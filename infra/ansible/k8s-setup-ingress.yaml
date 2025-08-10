@@ -1,0 +1,41 @@
+- name: Import SSL wildcard certificate to Kubernetes
+  hosts: localhost
+  become: true
+  gather_facts: false
+  collections:
+    - kubernetes.core
+  vars:
+    kubeconfig: ~/.kube/microk8s_config
+    secret_name: wildcard-k8s-local-tls
+    target_namespace: ingress
+  tasks:
+
+    - name: Patch nginx-ingress-microk8s-controller args
+      k8s:
+        state: present
+        namespace: ingress
+        kind: DaemonSet
+        name: nginx-ingress-microk8s-controller
+        merge_type:
+          - strategic-merge
+        definition:
+          spec:
+            template:
+              spec:
+                containers:
+                  - name: nginx-ingress-microk8s
+                    args:
+                      - /nginx-ingress-controller
+                      - --configmap=$(POD_NAMESPACE)/nginx-load-balancer-microk8s-conf
+                      - --tcp-services-configmap=$(POD_NAMESPACE)/nginx-ingress-tcp-microk8s-conf
+                      - --udp-services-configmap=$(POD_NAMESPACE)/nginx-ingress-udp-microk8s-conf
+                      - --ingress-class=public
+                      - ' '
+                      - --publish-status-address=127.0.0.1
+                      - --default-ssl-certificate="{{ target_namespace }}/{{ secret_name }}"
+        kubeconfig: "{{ kubeconfig }}"
+
+    - name: Restart to apply SSL certificate
+      shell: kubectl rollout restart daemonset/nginx-ingress-microk8s-controller -n {{ target_namespace }} --kubeconfig {{ kubeconfig }}
+      become: false
+
