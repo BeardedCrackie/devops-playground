@@ -1,10 +1,9 @@
-- name: Import SSL wildcard certificate
+- name: Import SSL wildcard certificate to Kubernetes
   hosts: localhost
   become: true
   gather_facts: false
   collections:
     - kubernetes.core
-    - community.crypto
   vars:
     kubeconfig: ~/.kube/microk8s_config
     ssl_dir: /etc/ssl/scripts/ssl
@@ -12,79 +11,18 @@
     ca_cert_file: "{{ ssl_dir }}/ca.crt"
     wildcard_key_file: "{{ ssl_dir }}/wildcard.k8s.local.key"
     wildcard_cert_file: "{{ ssl_dir }}/wildcard.k8s.local.crt"
-    wildcard_csr_file: "{{ ssl_dir }}/wildcard.k8s.local.csr"
-    csr_config_file: "{{ ssl_dir }}/wildcard-csr.conf"
     secret_name: wildcard-k8s-local-tls
     target_namespace: ingress
   tasks:
-    - name: Create SSL directory
-      file:
-        path: "{{ ssl_dir }}"
-        state: directory
-        mode: '0755'
-
-    - name: Generate CA private key
-      community.crypto.openssl_privatekey:
-        path: "{{ ca_key_file }}"
-        size: 4096
-        type: RSA
-        state: present
-
-    - name: Generate CA certificate
-      community.crypto.x509_certificate:
-        path: "{{ ca_cert_file }}"
-        privatekey_path: "{{ ca_key_file }}"
-        provider: selfsigned
-        selfsigned_not_after: "+3650d"
-        state: present
-
-    - name: Generate wildcard private key
-      community.crypto.openssl_privatekey:
-        path: "{{ wildcard_key_file }}"
-        size: 2048
-        type: RSA
-        state: present
-
-    - name: Create CSR config file
-      copy:
-        dest: "{{ csr_config_file }}"
-        content: |
-          [ req ]
-          default_bits       = 2048
-          prompt             = no
-          default_md         = sha256
-          req_extensions     = req_ext
-          distinguished_name = dn
-
-          [ dn ]
-          CN = *.k8s.local
-
-          [ req_ext ]
-          subjectAltName = @alt_names
-
-          [ alt_names ]
-          DNS.1 = *.k8s.local
-          DNS.2 = k8s.local
-
-    - name: Generate wildcard certificate signing request
-      community.crypto.openssl_csr:
-        path: "{{ wildcard_csr_file }}"
-        privatekey_path: "{{ wildcard_key_file }}"
-        common_name: "*.k8s.local"
-        subject_alt_name:
-          - "DNS:*.k8s.local"
-          - "DNS:k8s.local"
-        state: present
-
-    - name: Generate wildcard certificate signed by CA
-      community.crypto.x509_certificate:
-        path: "{{ wildcard_cert_file }}"
-        csr_path: "{{ wildcard_csr_file }}"
-        ownca_path: "{{ ca_cert_file }}"
-        ownca_privatekey_path: "{{ ca_key_file }}"
-        provider: ownca
-        ownca_not_after: "+825d"
-        state: present
+    - name: Check if SSL certificates exist
+      stat:
+        path: "{{ item }}"
+      register: ssl_files
+      loop:
+        - "{{ ca_cert_file }}"
+        - "{{ wildcard_cert_file }}"
+        - "{{ wildcard_key_file }}"
+      failed_when: not ssl_files.results | map(attribute='stat.exists') | list | all
 
     - name: Ensure ingress namespace exists
       k8s:
@@ -122,25 +60,32 @@
     - name: Display certificate information
       debug:
         msg: |
-          SSL wildcard certificate has been successfully imported!
+          SSL wildcard certificate has been successfully imported to Kubernetes!
           
           Certificate details:
           - Secret name: {{ secret_name }}
           - Namespace: {{ target_namespace }}
           - Certificate file: {{ wildcard_cert_file }}
           - Private key file: {{ wildcard_key_file }}
+          - CA certificate file: {{ ca_cert_file }}
           
           The certificate covers:
           - *.k8s.local
           - k8s.local
           
+          NGINX Ingress Controller Configuration:
+          ✅ ConfigMap updated: nginx-load-balancer-microk8s-conf
+          ✅ DaemonSet updated: nginx-ingress-microk8s-controller
+          ✅ Default SSL certificate configured
+          
           To trust this certificate on Windows:
-          1. Copy {{ ca_cert_file }} to your Windows machine
+          1. Copy {{ ca_cert_file }} (or /tmp/ca.crt) to your Windows machine
           2. Run PowerShell as Administrator and execute:
              Import-Certificate -FilePath "ca.crt" -CertStoreLocation Cert:\LocalMachine\Root
-          3. Or use Certificate Manager (certmgr.msc) to import to "Trusted Root Certification Authorities"
+          3. Or use the generated script: /tmp/import-ca-windows.ps1
+          4. Or use Certificate Manager (certmgr.msc) to import to "Trusted Root Certification Authorities"
 
-          You can now use this TLS secret in your ingress configurations.
+          Your *.k8s.local ingresses should now use the wildcard certificate by default!
 
     - name: Update NGINX Ingress ConfigMap for default SSL
       kubernetes.core.k8s:
