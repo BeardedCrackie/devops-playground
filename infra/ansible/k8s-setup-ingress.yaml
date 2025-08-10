@@ -30,9 +30,8 @@
                       - --tcp-services-configmap=$(POD_NAMESPACE)/nginx-ingress-tcp-microk8s-conf
                       - --udp-services-configmap=$(POD_NAMESPACE)/nginx-ingress-udp-microk8s-conf
                       - --ingress-class=public
-                      - ' '
                       - --publish-status-address=127.0.0.1
-                      - --default-ssl-certificate="{{ target_namespace }}/{{ secret_name }}"
+                      - --default-ssl-certificate={{ target_namespace }}/{{ secret_name }}
         kubeconfig: "{{ kubeconfig }}"
 
     - name: Create LoadBalancer service for ingress
@@ -61,8 +60,8 @@
                 port: 443
                 targetPort: 443
         kubeconfig: "{{ kubeconfig }}"
-        
-    - name: Restart to apply SSL certificate
+
+    - name: Restart nginx-ingress controller to apply SSL certificate
       shell: kubectl rollout restart daemonset/nginx-ingress-microk8s-controller -n {{ target_namespace }} --kubeconfig {{ kubeconfig }}
       become: false
 
