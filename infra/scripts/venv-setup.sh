@@ -4,7 +4,8 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INFRA_DIR="$SCRIPT_DIR/.."
 
-sudo apt install python3.12-venv curl unzip
+sudo apt update
+sudo apt install -y python3-venv curl unzip
 
 # Create a Python virtual environment in the ansible folder
 python3 -m venv $INFRA_DIR/venv
