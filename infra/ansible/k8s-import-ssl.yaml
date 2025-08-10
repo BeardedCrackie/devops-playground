@@ -135,3 +135,26 @@
           - k8s.local
           
           You can now use this TLS secret in your ingress configurations.
+
+    - name: Create ConfigMap for NGINX Ingress default SSL
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: nginx-configuration
+            namespace: "{{ target_namespace }}"
+            labels:
+              app.kubernetes.io/name: ingress-nginx
+              app.kubernetes.io/part-of: ingress-nginx
+          data:
+            ssl-certificate: "{{ target_namespace }}/{{ secret_name }}"
+            ssl-protocols: "TLSv1.2 TLSv1.3"
+            ssl-ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384"
+            ssl-prefer-server-ciphers: "true"
+            hsts: "true"
+            hsts-max-age: "31536000"
+            hsts-include-subdomains: "true"
+        kubeconfig: "{{ kubeconfig }}"
+
