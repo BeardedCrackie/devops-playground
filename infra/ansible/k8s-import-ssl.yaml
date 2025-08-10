@@ -134,6 +134,12 @@
           - *.k8s.local
           - k8s.local
           
+          To trust this certificate on Windows:
+          1. Copy {{ ca_cert_file }} to your Windows machine
+          2. Run PowerShell as Administrator and execute:
+             Import-Certificate -FilePath "ca.crt" -CertStoreLocation Cert:\LocalMachine\Root
+          3. Or use Certificate Manager (certmgr.msc) to import to "Trusted Root Certification Authorities"
+
           You can now use this TLS secret in your ingress configurations.
 
     - name: Update NGINX Ingress ConfigMap for default SSL
