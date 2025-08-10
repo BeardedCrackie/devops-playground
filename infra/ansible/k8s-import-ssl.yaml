@@ -1,0 +1,137 @@
+- name: Import SSL wildcard certificate
+  hosts: localhost
+  become: true
+  gather_facts: false
+  collections:
+    - kubernetes.core
+    - community.crypto
+  vars:
+    kubeconfig: ~/.kube/microk8s_config
+    ssl_dir: /etc/ssl/scripts/ssl
+    ca_key_file: "{{ ssl_dir }}/ca.key"
+    ca_cert_file: "{{ ssl_dir }}/ca.crt"
+    wildcard_key_file: "{{ ssl_dir }}/wildcard.k8s.local.key"
+    wildcard_cert_file: "{{ ssl_dir }}/wildcard.k8s.local.crt"
+    wildcard_csr_file: "{{ ssl_dir }}/wildcard.k8s.local.csr"
+    csr_config_file: "{{ ssl_dir }}/wildcard-csr.conf"
+    secret_name: wildcard-k8s-local-tls
+    target_namespace: ingress-nginx
+  tasks:
+    - name: Create SSL directory
+      file:
+        path: "{{ ssl_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Generate CA private key
+      community.crypto.openssl_privatekey:
+        path: "{{ ca_key_file }}"
+        size: 4096
+        type: RSA
+        state: present
+
+    - name: Generate CA certificate
+      community.crypto.x509_certificate:
+        path: "{{ ca_cert_file }}"
+        privatekey_path: "{{ ca_key_file }}"
+        provider: selfsigned
+        selfsigned_not_after: "+3650d"
+        state: present
+
+    - name: Generate wildcard private key
+      community.crypto.openssl_privatekey:
+        path: "{{ wildcard_key_file }}"
+        size: 2048
+        type: RSA
+        state: present
+
+    - name: Create CSR config file
+      copy:
+        dest: "{{ csr_config_file }}"
+        content: |
+          [ req ]
+          default_bits       = 2048
+          prompt             = no
+          default_md         = sha256
+          req_extensions     = req_ext
+          distinguished_name = dn
+
+          [ dn ]
+          CN = *.k8s.local
+
+          [ req_ext ]
+          subjectAltName = @alt_names
+
+          [ alt_names ]
+          DNS.1 = *.k8s.local
+          DNS.2 = k8s.local
+
+    - name: Generate wildcard certificate signing request
+      community.crypto.openssl_csr:
+        path: "{{ wildcard_csr_file }}"
+        privatekey_path: "{{ wildcard_key_file }}"
+        common_name: "*.k8s.local"
+        subject_alt_name:
+          - "DNS:*.k8s.local"
+          - "DNS:k8s.local"
+        state: present
+
+    - name: Generate wildcard certificate signed by CA
+      community.crypto.x509_certificate:
+        path: "{{ wildcard_cert_file }}"
+        csr_path: "{{ wildcard_csr_file }}"
+        ownca_path: "{{ ca_cert_file }}"
+        ownca_privatekey_path: "{{ ca_key_file }}"
+        provider: ownca
+        ownca_not_after: "+825d"
+        state: present
+
+    - name: Ensure ingress-nginx namespace exists
+      k8s:
+        api_version: v1
+        kind: Namespace
+        name: "{{ target_namespace }}"
+        state: present
+        kubeconfig: "{{ kubeconfig }}"
+
+    - name: Read wildcard certificate file
+      slurp:
+        src: "{{ wildcard_cert_file }}"
+      register: wildcard_cert_content
+
+    - name: Read wildcard private key file
+      slurp:
+        src: "{{ wildcard_key_file }}"
+      register: wildcard_key_content
+
+    - name: Create or update TLS secret in Kubernetes
+      k8s:
+        state: present
+        kubeconfig: "{{ kubeconfig }}"
+        resource_definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: "{{ secret_name }}"
+            namespace: "{{ target_namespace }}"
+          type: kubernetes.io/tls
+          data:
+            tls.crt: "{{ wildcard_cert_content.content }}"
+            tls.key: "{{ wildcard_key_content.content }}"
+
+    - name: Display certificate information
+      debug:
+        msg: |
+          SSL wildcard certificate has been successfully imported!
+          
+          Certificate details:
+          - Secret name: {{ secret_name }}
+          - Namespace: {{ target_namespace }}
+          - Certificate file: {{ wildcard_cert_file }}
+          - Private key file: {{ wildcard_key_file }}
+          
+          The certificate covers:
+          - *.k8s.local
+          - k8s.local
+          
+          You can now use this TLS secret in your ingress configurations.
