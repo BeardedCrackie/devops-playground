@@ -22,7 +22,11 @@
         - "{{ ca_cert_file }}"
         - "{{ wildcard_cert_file }}"
         - "{{ wildcard_key_file }}"
-      failed_when: not ssl_files.results | map(attribute='stat.exists') | list | all
+
+    - name: Verify all SSL certificates exist
+      fail:
+        msg: "Missing SSL certificate files. Please ensure all certificates are present: {{ ssl_files.results | selectattr('stat.exists', 'equalto', false) | map(attribute='item') | list }}"
+      when: ssl_files.results | selectattr('stat.exists', 'equalto', false) | list | length > 0
 
     - name: Ensure ingress namespace exists
       k8s:
