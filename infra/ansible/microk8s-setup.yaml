@@ -8,7 +8,7 @@
       vars:
         microk8s_version: "1.33/stable"
         microk8s_plugins:
-          dns: "8.8.8.8, 192.168.0.1"
+          dns: "{{ dns_servers | join(', ') }}"
           istio: true
           ingress: true
           helm: true                             # Helm 3
