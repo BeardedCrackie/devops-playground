@@ -20,7 +20,7 @@ spec:
     - name: registry-url
       description: "The container registry URL"
       type: string
-      default: "registry.k8s.local" 
+      default: "https://registry.k8s.local"
     - name: registry-password
       type: string
       default: "" 

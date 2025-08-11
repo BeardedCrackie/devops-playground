@@ -9,7 +9,7 @@
     ssl_dir: /etc/ssl/scripts/ssl
     ca_key_file: "{{ ssl_dir }}/ca.key"
     ca_cert_file: "{{ ssl_dir }}/ca.crt"
-    wildcard_key_file: "{{ ssl_dir }}/wildcard.k8s.local.key"
+    wildcard_key_file: "{{ ssl_dir }}/wildcard.k8s.local.key"S
     wildcard_cert_file: "{{ ssl_dir }}/wildcard.k8s.local.crt"
     secret_name: wildcard-k8s-local-tls
     target_namespace: ingress
@@ -92,7 +92,7 @@
           Your *.k8s.local ingresses should now use the wildcard certificate by default!
 
 - name: Distribute CA certificate to all hosts
-  hosts: all
+  hosts: microk8s
   become: true
   gather_facts: true
   vars:
