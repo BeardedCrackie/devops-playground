@@ -8,6 +8,7 @@
     ssl_dir: /etc/ssl/scripts/ssl
     ca_key_file: "{{ ssl_dir }}/ca.key"
     ca_cert_file: "{{ ssl_dir }}/ca.crt"
+    ca_csr_file: "{{ ssl_dir }}/ca.csr"
     wildcard_key_file: "{{ ssl_dir }}/wildcard.k8s.local.key"
     wildcard_cert_file: "{{ ssl_dir }}/wildcard.k8s.local.crt"
     wildcard_csr_file: "{{ ssl_dir }}/wildcard.k8s.local.csr"
@@ -26,9 +27,24 @@
         type: RSA
         state: present
 
+    - name: Generate CA certificate signing request
+      community.crypto.openssl_csr:
+        path: "{{ ca_csr_file }}"
+        privatekey_path: "{{ ca_key_file }}"
+        common_name: "K8s Local CA"
+        basic_constraints:
+          - "CA:TRUE"
+        basic_constraints_critical: true
+        key_usage:
+          - "keyCertSign"
+          - "cRLSign"
+        key_usage_critical: true
+        state: present
+
     - name: Generate CA certificate
       community.crypto.x509_certificate:
         path: "{{ ca_cert_file }}"
+        csr_path: "{{ ca_csr_file }}"
         privatekey_path: "{{ ca_key_file }}"
         provider: selfsigned
         selfsigned_not_after: "+3650d"
