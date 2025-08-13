@@ -91,60 +91,6 @@
     remote_src: true
     mode: '0644'
 
-- name: Create PowerShell script for Windows CA import
-  copy:
-    dest: "/tmp/import-ca-windows.ps1"
-    content: |
-      # PowerShell script to import CA certificate on Windows
-      # Run this script as Administrator on your Windows machine
-      
-      # Check if running as Administrator
-      if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-          Write-Error "This script requires Administrator privileges. Please run PowerShell as Administrator."
-          exit 1
-      }
-      
-      # Path to the CA certificate (adjust as needed)
-      $CertPath = "C:\temp\ca.crt"
-      
-      # Check if certificate file exists
-      if (-not (Test-Path $CertPath)) {
-          Write-Error "Certificate file not found at $CertPath"
-          Write-Host "Please copy the ca.crt file to C:\temp\ first"
-          exit 1
-      }
-      
-      try {
-          # Import the certificate
-          Write-Host "Importing CA certificate to Trusted Root Certification Authorities..."
-          Import-Certificate -FilePath $CertPath -CertStoreLocation Cert:\LocalMachine\Root -Verbose
-          
-          Write-Host "✅ Certificate imported successfully!"
-          
-          # Verify the import
-          $ImportedCert = Get-ChildItem -Path Cert:\LocalMachine\Root | Where-Object {$_.Subject -like "*k8s.local*"}
-          if ($ImportedCert) {
-              Write-Host "✅ Certificate verification successful!"
-              Write-Host "Subject: $($ImportedCert.Subject)"
-              Write-Host "Thumbprint: $($ImportedCert.Thumbprint)"
-              Write-Host "Valid until: $($ImportedCert.NotAfter)"
-          }
-          
-          Write-Host ""
-          Write-Host "🌐 Your *.k8s.local certificates should now be trusted by:"
-          Write-Host "   - Chrome/Edge browsers"
-          Write-Host "   - Windows applications"
-          Write-Host "   - PowerShell/curl commands"
-          Write-Host ""
-          Write-Host "📝 For Firefox, you may need to import the certificate manually:"
-          Write-Host "   Settings → Privacy & Security → Certificates → View Certificates → Authorities → Import"
-          
-      } catch {
-          Write-Error "Failed to import certificate: $_"
-          exit 1
-      }
-    mode: '0755'
-
 - name: Display SSL certificate creation summary
   debug:
     msg: |
@@ -166,5 +112,4 @@
       1. Run the k8s-import-ssl.yaml playbook to import into Kubernetes
       2. To trust certificates on Windows:
          - Copy /tmp/ca.crt to your Windows machine
-         - Run /tmp/import-ca-windows.ps1 as Administrator
-         - Or manually import via Certificate Manager (certmgr.msc)
+         - Manually import via Certificate Manager (certmgr.msc)
