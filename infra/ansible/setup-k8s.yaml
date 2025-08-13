@@ -1,0 +1,8 @@
+---
+- name: Infra automation main playbook
+  hosts: localhost
+  become: true
+  gather_facts: false
+  roles:
+    - role: ssl_create_ca
+      tags: [ca]
