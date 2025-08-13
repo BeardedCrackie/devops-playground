@@ -13,10 +13,10 @@ This roadmap outlines the infrastructure and application goals, progress, and cu
 
 ### 🧱 Base Apps
 - [x] Helm
-- [ ] Tekton
-- [ ] ArgoCD
+- [X] Tekton
+- [X] ArgoCD
+- [X] Prometheus + Grafana
 - [ ] RabbitMQ + operator
-- [ ] Prometheus + Grafana
 - [ ] Postgre + Operator
 - [ ] Loki
 - [ ] Jaeger
