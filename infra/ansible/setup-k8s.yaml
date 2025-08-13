@@ -25,10 +25,10 @@
 
   tasks:
     - name: Generate microk8s kubeconfig
-      include_tasks: microk8s_generate_kubeconfig.yaml
+      include_tasks: tasks/microk8s_generate_kubeconfig.yaml
 
     - name: Get microk8s kubeconfig
-      include_tasks: microk8s_get_kubeconfig.yaml
+      include_tasks: tasks/microk8s_get_kubeconfig.yaml
 
 - name: Create CA
   hosts: localhost
