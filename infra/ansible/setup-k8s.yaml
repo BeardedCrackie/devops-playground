@@ -70,3 +70,13 @@
     wildcard_key_file: "{{ ssl_dir }}/wildcard.k8s.local.key"
     wildcard_cert_file: "{{ ssl_dir }}/wildcard.k8s.local.crt"
     target_namespace: ingress
+
+- name: Setup applications"
+  hosts: localhost
+  vars:
+    kubeconfig: ~/.kube/microk8s_config
+    secret_name: wildcard-k8s-local-tls
+    target_namespace: ingress
+  tasks:
+    - name: Setup ingress
+      include_tasks: tasks/k8s-setup-ingress.yaml
