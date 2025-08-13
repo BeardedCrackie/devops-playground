@@ -19,12 +19,15 @@
         microk8s_enable_HA: true # enable high-availability?
         microk8s_group_HA: "microk8s" # hostgroup whose members will form high-availability cluster
 
+- name: Generate kubeconfig
+  hosts: microk8s
   tasks:
     - name: Generate microk8s kubeconfig
       include_tasks: tasks/microk8s_generate_kubeconfig.yaml
 
     - name: Get microk8s kubeconfig
       include_tasks: tasks/microk8s_get_kubeconfig.yaml
+  tags: [kubeconfig]
 
 - name: Distribute ssl certificates to hosts
   hosts: microk8s
@@ -34,6 +37,7 @@
   tasks:
     - name: distribute ssl certificates to hosts
       include_tasks: tasks/hosts-distribute-ssl.yaml
+  tags: [ssl]
 
 - name: Import ssl certificates to k8s
   hosts: localhost
