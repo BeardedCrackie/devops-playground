@@ -18,6 +18,6 @@ microk8s:
 all:
   vars:
     project_name: "microk8s"
-    ssl_dir: "/etc/microk8s/scripts/ssl"
+    ssl_dir: "/etc/ssl/microk8s/ssl"
     kubeconfig: ~/.kube/microk8s_config
 
