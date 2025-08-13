@@ -15,8 +15,8 @@
   community.kubernetes.helm:
     name: prometheus
     chart_ref: prometheus-community/kube-prometheus-stack
-    chart_version: "{{ monitoring_helm_chart_version: }}"
-    release_namespace: "{{ monitoring_namespace }}"
+    chart_version: "68.2.1"
+    release_namespace: "monitoring"
     create_namespace: false
     values:
       prometheus:
