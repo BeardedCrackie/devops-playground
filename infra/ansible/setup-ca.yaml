@@ -1,0 +1,19 @@
+---
+
+- name: Create CA
+  hosts: localhost
+  become: true
+  tags: [ca]
+  vars:
+    ca_key_file: "{{ ssl_dir }}/ca.key"
+    ca_cert_file: "{{ ssl_dir }}/ca.crt"
+    ca_csr_file: "{{ ssl_dir }}/ca.csr"
+    wildcard_key_file: "{{ ssl_dir }}/wildcard.k8s.local.key"
+    wildcard_cert_file: "{{ ssl_dir }}/wildcard.k8s.local.crt"
+    wildcard_csr_file: "{{ ssl_dir }}/wildcard.k8s.local.csr"
+    csr_config_file: "{{ ssl_dir }}/wildcard-csr.conf"
+    target_namespace: ingress
+  tasks:
+    - name: create certificate authority
+      include_tasks: tasks/create-ca.yaml
+      tags: [ca]
