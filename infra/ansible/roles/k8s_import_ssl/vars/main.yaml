@@ -7,3 +7,4 @@ wildcard_key_file: "{{ ssl_dir }}/wildcard.k8s.local.key"
 wildcard_cert_file: "{{ ssl_dir }}/wildcard.k8s.local.crt"
 wildcard_csr_file: "{{ ssl_dir }}/wildcard.k8s.local.csr"
 csr_config_file: "{{ ssl_dir }}/wildcard-csr.conf"
+target_namespace: ingress

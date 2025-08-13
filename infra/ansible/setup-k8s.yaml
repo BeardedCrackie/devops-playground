@@ -18,14 +18,11 @@
           - "{{ ansible_user }}"
         microk8s_enable_HA: true # enable high-availability?
         microk8s_group_HA: "microk8s" # hostgroup whose members will form high-availability cluster
+    
     - role: microk8s_get_kubeconfig
       vars:
       kubeconfig: ~/.kube/microk8s_config
 
-- name: Infra automation main playbook
-  hosts: localhost
-  become: true
-  gather_facts: false
-  roles:
-    - role: ssl_create_ca
-      tags: [ca]
+    - role: k8s_import_ssl
+      vars:
+        kubeconfig: ~/.kube/microk8s_config
