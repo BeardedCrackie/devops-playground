@@ -70,6 +70,6 @@
         src: https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
         kubeconfig: "{{ kubeconfig }}"
     - name: Install kube-prometheus-stack via Helm
-      include_tasks: k8s-setup-monitoring.yaml
+      include_tasks: tasks/k8s-setup-monitoring.yaml
     - name: Install ArgoCD
       include_tasks: tasks/k8s-setup-argo.yaml
