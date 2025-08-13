@@ -19,6 +19,7 @@
     kind: Namespace
     name: "{{ target_namespace }}"
     state: present
+  become: false   # overrides play-level become
 
 - name: Read wildcard certificate file
   slurp:
@@ -43,6 +44,7 @@
       data:
         tls.crt: "{{ wildcard_cert_content.content }}"
         tls.key: "{{ wildcard_key_content.content }}"
+  become: false   # overrides play-level become
 
 - name: Display certificate information
   debug:
