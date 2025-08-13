@@ -46,9 +46,11 @@
     wildcard_key_file: "{{ ssl_dir }}/wildcard.k8s.local.key"
     wildcard_cert_file: "{{ ssl_dir }}/wildcard.k8s.local.crt"
     target_namespace: ingress
+  tags: [ssl]
 
 - name: Setup applications"
   hosts: localhost
+  tags: [app]
   vars:
     secret_name: wildcard-k8s-local-tls
     target_namespace: ingress
