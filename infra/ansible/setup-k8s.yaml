@@ -2,9 +2,6 @@
 - name: Create microk8s cluster
   hosts: microk8s
 
-  vars:
-    kubeconfig: ~/.kube/microk8s_config
-
   roles:
     - role: istvano.microk8s
       vars:
@@ -53,7 +50,6 @@
 - name: Setup applications"
   hosts: localhost
   vars:
-    kubeconfig: ~/.kube/microk8s_config
     secret_name: wildcard-k8s-local-tls
     target_namespace: ingress
     monitoring_helm_chart_version: "68.2.1"  # Adjust as needed
