@@ -5,17 +5,14 @@
     kind: Namespace
     name: argocd
     state: present
-    kubeconfig: "{{ kubeconfig }}"
 
 - name: Install ArgoCD manifests
   kubernetes.core.k8s:
     state: present
     namespace: argocd
     src: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    kubeconfig: "{{ kubeconfig }}"
 
 - name: Install Argo root application manifests
   kubernetes.core.k8s:
     state: present
     src: ../../gitops/argocd/root-app.yaml
-    kubeconfig: "{{ kubeconfig }}"

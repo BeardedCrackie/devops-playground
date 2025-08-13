@@ -22,7 +22,6 @@
                   - --ingress-class=public
                   - --publish-status-address=127.0.0.1
                   - --default-ssl-certificate={{ target_namespace }}/{{ secret_name }}
-    kubeconfig: "{{ kubeconfig }}"
 
 - name: Create LoadBalancer service for ingress
   kubernetes.core.k8s:
@@ -49,7 +48,6 @@
             protocol: TCP
             port: 443
             targetPort: 443
-    kubeconfig: "{{ kubeconfig }}"
 
 - name: Restart nginx-ingress controller to apply SSL certificate
   shell: kubectl rollout restart daemonset/nginx-ingress-microk8s-controller -n {{ target_namespace }} --kubeconfig {{ kubeconfig }}

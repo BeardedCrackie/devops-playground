@@ -5,7 +5,6 @@
     kind: Namespace
     name: "{{ monitoring_namespace }}"
     state: present
-    kubeconfig: "{{ kubeconfig }}"
 
 - name: Add Prometheus community Helm repo
   community.kubernetes.helm_repository:
@@ -18,7 +17,6 @@
     chart_ref: prometheus-community/kube-prometheus-stack
     chart_version: "{{ monitoring_helm_chart_version: }}"
     release_namespace: "{{ monitoring_namespace }}"
-    kubeconfig: "{{ kubeconfig }}"
     create_namespace: false
     values:
       prometheus:
