@@ -3,7 +3,7 @@
   kubernetes.core.k8s:
     api_version: v1
     kind: Namespace
-    name: "{{ monitoring_namespace }}"
+    name: "monitoring"
     state: present
 
 - name: Add Prometheus community Helm repo
