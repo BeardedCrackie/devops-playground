@@ -1,0 +1,31 @@
+---
+- name: Create monitoring namespace if it doesn't exist
+  kubernetes.core.k8s:
+    api_version: v1
+    kind: Namespace
+    name: "{{ monitoring_namespace }}"
+    state: present
+    kubeconfig: "{{ kubeconfig }}"
+
+- name: Add Prometheus community Helm repo
+  community.kubernetes.helm_repository:
+    name: prometheus-community
+    repo_url: https://prometheus-community.github.io/helm-charts
+
+- name: Install kube-prometheus-stack Helm chart
+  community.kubernetes.helm:
+    name: prometheus
+    chart_ref: prometheus-community/kube-prometheus-stack
+    chart_version: "{{ monitoring_helm_chart_version: }}"
+    release_namespace: "{{ monitoring_namespace }}"
+    kubeconfig: "{{ kubeconfig }}"
+    create_namespace: false
+    values:
+      prometheus:
+        service:
+          type: NodePort
+      grafana:
+        service:
+          type: NodePort
+        adminPassword: "admin123"  # Set default admin password
+    wait: true

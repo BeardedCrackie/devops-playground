@@ -77,6 +77,8 @@
     kubeconfig: ~/.kube/microk8s_config
     secret_name: wildcard-k8s-local-tls
     target_namespace: ingress
+    monitoring_helm_chart_version: "68.2.1"  # Adjust as needed
+    monitoring_namespace: "monitoring"
   tasks:
     - name: Setup ingress
       include_tasks: tasks/k8s-setup-ingress.yaml
@@ -85,3 +87,5 @@
         state: present
         src: https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
         kubeconfig: "{{ kubeconfig }}"
+    - name: Install kube-prometheus-stack via Helm
+      include_tasks: k8s-setup-monitoring.yaml
