@@ -1,7 +1,6 @@
 ---
 - name: Create microk8s cluster
   hosts: microk8s
-  become: true
 
   vars:
     kubeconfig: ~/.kube/microk8s_config
@@ -46,7 +45,7 @@
   tasks:
     - name: create certificate authority
       include_tasks: tasks/create-ca.yaml
-  tags: [ca]
+      tags: [ca]
 
 - name: Distribute ssl certificates to hosts
   hosts: microk8s
