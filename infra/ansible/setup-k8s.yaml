@@ -2,6 +2,10 @@
 - name: Create microk8s cluster
   hosts: microk8s
   become: true
+
+  vars:
+    kubeconfig: ~/.kube/microk8s_config
+
   roles:
     - role: istvano.microk8s
       vars:
@@ -18,11 +22,51 @@
           - "{{ ansible_user }}"
         microk8s_enable_HA: true # enable high-availability?
         microk8s_group_HA: "microk8s" # hostgroup whose members will form high-availability cluster
-    
-    - role: microk8s_get_kubeconfig
-      vars:
-      kubeconfig: ~/.kube/microk8s_config
 
-    - role: k8s_import_ssl
-      vars:
-        kubeconfig: ~/.kube/microk8s_config
+  tasks:
+    - name: Generate microk8s kubeconfig
+      include_tasks: microk8s_generate_kubeconfig.yaml
+
+    - name: Get microk8s kubeconfig
+      include_tasks: microk8s_get_kubeconfig.yaml
+
+- name: Create CA
+  hosts: localhost
+  become: true
+  vars:
+    ssl_dir: "/etc/{{ microk8s }}/scripts/ssl"
+    ca_key_file: "{{ ssl_dir }}/ca.key"
+    ca_cert_file: "{{ ssl_dir }}/ca.crt"
+    ca_csr_file: "{{ ssl_dir }}/ca.csr"
+    wildcard_key_file: "{{ ssl_dir }}/wildcard.k8s.local.key"
+    wildcard_cert_file: "{{ ssl_dir }}/wildcard.k8s.local.crt"
+    wildcard_csr_file: "{{ ssl_dir }}/wildcard.k8s.local.csr"
+    csr_config_file: "{{ ssl_dir }}/wildcard-csr.conf"
+    target_namespace: ingress
+  tasks:
+    - name: create certificate authority
+      include_tasks: tasks/create-ca.yaml
+  tags: [ca]
+
+- name: Distribute ssl certificates to hosts
+  hosts: microk8s
+  become: true
+  vars:
+    ssl_dir: "/etc/{{ microk8s }}/scripts/ssl"
+    ca_cert_file: "{{ ssl_dir }}/ca.crt"
+  tasks:
+    - name: distribute ssl certificates to hosts
+      include_tasks: tasks/hosts-distribute-ssl.yaml
+
+- name: Import ssl certificates to k8s
+  hosts: localhost
+  become: true
+  tasks:
+    - name: import ssl certificates to k8s
+      include_tasks: tasks/k8s-import-ssl.yaml
+  vars:
+    ssl_dir: "/etc/{{ microk8s }}/scripts/ssl"
+    ca_cert_file: "{{ ssl_dir }}/ca.crt"
+    wildcard_key_file: "{{ ssl_dir }}/wildcard.k8s.local.key"
+    wildcard_cert_file: "{{ ssl_dir }}/wildcard.k8s.local.crt"
+    target_namespace: ingress
