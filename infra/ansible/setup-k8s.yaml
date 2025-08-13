@@ -32,8 +32,8 @@
 - name: Create CA
   hosts: localhost
   become: true
+  tags: [ca]
   vars:
-    ssl_dir: "/etc/{{ microk8s }}/scripts/ssl"
     ca_key_file: "{{ ssl_dir }}/ca.key"
     ca_cert_file: "{{ ssl_dir }}/ca.crt"
     ca_csr_file: "{{ ssl_dir }}/ca.csr"
@@ -51,7 +51,6 @@
   hosts: microk8s
   become: true
   vars:
-    ssl_dir: "/etc/{{ microk8s }}/scripts/ssl"
     ca_cert_file: "{{ ssl_dir }}/ca.crt"
   tasks:
     - name: distribute ssl certificates to hosts
@@ -64,7 +63,6 @@
     - name: import ssl certificates to k8s
       include_tasks: tasks/k8s-import-ssl.yaml
   vars:
-    ssl_dir: "/etc/{{ microk8s }}/scripts/ssl"
     ca_cert_file: "{{ ssl_dir }}/ca.crt"
     wildcard_key_file: "{{ ssl_dir }}/wildcard.k8s.local.key"
     wildcard_cert_file: "{{ ssl_dir }}/wildcard.k8s.local.crt"

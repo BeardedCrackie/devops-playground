@@ -14,3 +14,9 @@ microk8s:
     dns_servers:
       - "8.8.8.8"
       - "192.168.0.1"
+
+all:
+  vars:
+    project_name: "microk8s"
+    ssl_dir: "/etc/microk8s/scripts/ssl"
+
