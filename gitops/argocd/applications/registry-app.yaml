@@ -31,7 +31,7 @@ spec:
               level: info
     - repoURL: https://github.com/BeardedCrackie/devops-playground.git
       targetRevision: HEAD
-      path: gitops/apps/zod
+      path: gitops/apps/zot
 
   destination:
     server: https://kubernetes.default.svc
