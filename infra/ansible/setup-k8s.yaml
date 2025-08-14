@@ -5,9 +5,9 @@
   roles:
     - role: istvano.microk8s
       vars:
-        microk8s_version: "1.33/stable"
+        microk8s_version: "1.32/stable"
         microk8s_plugins:
-          dns: "{{ dns_servers | join(',') }}"
+          dns: false
           istio: true
           ingress: true
           helm: true                             # Helm 3
@@ -18,6 +18,10 @@
           - "{{ ansible_user }}"
         microk8s_enable_HA: true # enable high-availability?
         microk8s_group_HA: "microk8s" # hostgroup whose members will form high-availability cluster
+  tasks:
+    - name: enable dns with provided upstream
+      command: "microk8s.enable dns:{{ dns_servers | join(',') }}"
+  tags: [cluster]
 
 - name: Generate kubeconfig
   hosts: microk8s
