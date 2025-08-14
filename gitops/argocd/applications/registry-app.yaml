@@ -5,7 +5,7 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
+  sources:
     - repoURL: http://zotregistry.dev/helm-charts
       chart: zot
       targetRevision: 0.1.78

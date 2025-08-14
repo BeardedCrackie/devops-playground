@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/part-of: devops-playground
 spec:
   project: default
-  source:
+  sources:
     - repoURL: https://github.com/BeardedCrackie/devops-playground.git
       targetRevision: HEAD
       path: gitops/apps/tasklist/kustomize/base
