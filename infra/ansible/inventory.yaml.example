@@ -9,7 +9,6 @@ microk8s:
   vars:
     ansible_user: "ubuntu"
     load_balancer_ip_ranges: "192.168.0.230-192.168.0.240,192.168.5.100-192.168.5.200,192.168.70/24"
-    ingress_host: "k8s.local" 
     gateway: "192.168.0.1"
     dns_servers:
       - "192.168.0.1"
@@ -20,4 +19,5 @@ all:
     project_name: "microk8s"
     ssl_dir: "/etc/ssl/microk8s/ssl"
     kubeconfig: ~/.kube/microk8s_config
+    ingress_host: "k8s.local" 
 

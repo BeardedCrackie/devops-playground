@@ -6,10 +6,8 @@ metadata:
 
 resources:
   - tasklist-app.yaml
-  - tasklist-pipeline.yaml
   - registry-app.yaml
   - tekton-app.yaml
-  - auxiliary.yaml
 
 commonLabels:
   managed-by: argocd
