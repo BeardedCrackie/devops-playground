@@ -6,29 +6,32 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: http://zotregistry.dev/helm-charts
-    chart: zot
-    targetRevision: 0.1.78
-    helm:
-      values: |
-        persistence:
-          enabled: true
-          accessMode: ReadWriteOnce
-          size: 10Gi
-          storageClass: standard
+    - repoURL: http://zotregistry.dev/helm-charts
+      chart: zot
+      targetRevision: 0.1.78
+      helm:
+        values: |
+          persistence:
+            enabled: true
+            accessMode: ReadWriteOnce
+            size: 10Gi
+            storageClass: standard
 
-        service:
-          type: ClusterIP
-          port: 5000
-
-        config:
-          http:
-            address: "0.0.0.0"
+          service:
+            type: ClusterIP
             port: 5000
-          storage:
-            rootDirectory: /var/lib/zot
-          log:
-            level: info
+
+          config:
+            http:
+              address: "0.0.0.0"
+              port: 5000
+            storage:
+              rootDirectory: /var/lib/zot
+            log:
+              level: info
+    - repoURL: https://github.com/user/my-argocd-project.git
+      targetRevision: HEAD
+      path: gitops/apps/zod
 
   destination:
     server: https://kubernetes.default.svc
