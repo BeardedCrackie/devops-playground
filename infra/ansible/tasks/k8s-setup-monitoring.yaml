@@ -27,3 +27,32 @@
           type: NodePort
         adminPassword: "admin123"  # Set default admin password
     wait: true
+
+- name: Create Grafana Ingress
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: grafana-ingress
+        namespace: monitoring
+        labels:
+          app: grafana
+        annotations:
+          nginx.ingress.kubernetes.io/proxy-body-size: 10m
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+          nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+      spec:
+        ingressClassName: nginx
+        rules:
+          - host: grafana.k8s.local
+            http:
+              paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: prometheus-grafana
+                      port:
+                        number: 80
