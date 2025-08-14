@@ -46,7 +46,7 @@
       spec:
         ingressClassName: nginx
         rules:
-          - host: grafana.k8s.local
+          - host: "grafana.{{ ingress_host }}"
             http:
               paths:
                 - path: /
