@@ -18,6 +18,7 @@
           - "{{ ansible_user }}"
         microk8s_enable_HA: true # enable high-availability?
         microk8s_group_HA: "microk8s" # hostgroup whose members will form high-availability cluster
+  tags: [cluster]
 
 - name: Generate kubeconfig
   hosts: microk8s
