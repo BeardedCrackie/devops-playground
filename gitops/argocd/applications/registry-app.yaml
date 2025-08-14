@@ -29,7 +29,7 @@ spec:
               rootDirectory: /var/lib/zot
             log:
               level: info
-    - repoURL: https://github.com/user/my-argocd-project.git
+    - repoURL: https://github.com/BeardedCrackie/devops-playground.git
       targetRevision: HEAD
       path: gitops/apps/zod
 
