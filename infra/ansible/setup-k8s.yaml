@@ -7,7 +7,7 @@
       vars:
         microk8s_version: "1.33/stable"
         microk8s_plugins:
-          dns: "{{ dns_servers | join(',') }}"
+          dns: "{{ dns_server[0] }}"
           istio: true
           ingress: true
           helm: true                             # Helm 3

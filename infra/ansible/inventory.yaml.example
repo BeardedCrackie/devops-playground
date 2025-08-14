@@ -12,8 +12,8 @@ microk8s:
     ingress_host: "k8s.local" 
     gateway: "192.168.0.1"
     dns_servers:
-      - "8.8.8.8"
       - "192.168.0.1"
+      - "8.8.8.8"
 
 all:
   vars:
