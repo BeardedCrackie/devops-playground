@@ -9,9 +9,12 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/BeardedCrackie/devops-playground.git
-    targetRevision: HEAD
-    path: gitops/apps/tasklist/kustomize/base
+    - repoURL: https://github.com/BeardedCrackie/devops-playground.git
+      targetRevision: HEAD
+      path: gitops/apps/tasklist/kustomize/base
+    - repoURL: https://github.com/BeardedCrackie/devops-playground.git
+      targetRevision: HEAD
+      path: gitops/apps/tasklist/tekton
   destination:
     server: https://kubernetes.default.svc
     namespace: tasklist
