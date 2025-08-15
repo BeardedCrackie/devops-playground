@@ -1,14 +1,28 @@
-data "local_file" "ansible_inventory" {
-  filename = "../ansible/inventory.yaml"
-}
+# Proxmox Talos VM Terraform Module
 
-locals {
-  inventory = yamldecode(data.local_file.ansible_inventory.content)
-  hosts = local.inventory["microk8s"]["hosts"]
-  gateway = local.inventory["microk8s"]["vars"]["gateway"]
-  dns_servers = local.inventory["microk8s"]["vars"]["dns_servers"]
-}
+This Terraform module creates Talos Linux virtual machines on Proxmox VE with cloud-init configuration.
 
+## Features
+
+- Creates Talos Linux VMs on Proxmox VE
+- Supports both controlplane and worker nodes
+- Cloud-init configuration for automated setup
+- Flexible networking (DHCP or static IP)
+- Optional TPM 2.0 support
+- Customizable node labels and taints
+- Support for custom Talos configurations
+
+## Requirements
+
+- Terraform >= 1.0
+- Proxmox VE with Talos Linux ISO template
+- Network connectivity to Proxmox VE
+
+## Usage
+
+### Basic Example
+
+```hcl
 locals {
   talos = {
     version = "v1.7.4"
@@ -79,12 +93,11 @@ module "talos_worker" {
     "environment"                    = "homelab"
   }
 }
+```
 
-# Output the IP addresses
-output "controlplane_ip" {
-  value = module.talos_controlplane_01.ipv4_address
-}
+## Prerequisites
 
-output "worker_ips" {
-  value = module.talos_worker[*].ipv4_address
-}
+### Preparing Talos Image
+
+1. Talos ISO url via talos factory (https://factory.talos.dev/)
+
