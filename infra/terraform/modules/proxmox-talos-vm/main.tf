@@ -18,9 +18,9 @@ resource "proxmox_virtual_environment_vm" "talos_vm" {
   memory {
     dedicated = var.memory_size
   }
-
+  
   agent {
-    enabled = false # Talos doesn't use QEMU guest agent by default
+    enabled = true
   }
 
   startup {
