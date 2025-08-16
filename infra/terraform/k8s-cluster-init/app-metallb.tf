@@ -37,3 +37,18 @@ resource "kubernetes_manifest" "metallb_ipaddresspool" {
     }
   }
 }
+
+# MetalLB L2Advertisement CR
+resource "kubernetes_manifest" "metallb_l2advertisement" {
+  manifest = {
+    apiVersion = "metallb.io/v1beta1"
+    kind       = "L2Advertisement"
+    metadata = {
+      name      = "lb-ip"
+      namespace = kubernetes_namespace.metallb.metadata[0].name
+    }
+    spec = {
+      ipAddressPools = [kubernetes_manifest.metallb_ipaddresspool.manifest["metadata"]["name"]]
+    }
+  }
+}
