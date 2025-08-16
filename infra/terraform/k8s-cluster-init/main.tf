@@ -20,3 +20,19 @@ resource "helm_release" "metallb" {
     kubernetes_namespace.metallb
   ]
 }
+
+# MetalLB IPAddressPool CR (Layer 2 example)
+resource "kubernetes_manifest" "metallb_ipaddresspool" {
+  manifest = {
+    apiVersion = "metallb.io/v1beta1"
+    kind       = "IPAddressPool"
+    metadata = {
+      name      = "lb-ip"
+      namespace = kubernetes_namespace.metallb.metadata[0].name
+    }
+    spec = {
+      addresses = [var.metallb_ip_pool]
+      autoAssign = true
+    }
+  }
+}
