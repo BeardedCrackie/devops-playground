@@ -1,5 +1,5 @@
 data "local_file" "ansible_inventory" {
-  filename = "../ansible/inventory.yaml"
+  filename = "../../ansible/inventory.yaml"
 }
 
 locals {
