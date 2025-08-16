@@ -1,6 +1,14 @@
-previous config
+data "local_file" "ansible_inventory" {
+  filename = "../../ansible/inventory.yaml"
+}
 
-```
+locals {
+  inventory = yamldecode(data.local_file.ansible_inventory.content)
+  hosts = local.inventory["microk8s"]["hosts"]
+  gateway = local.inventory["microk8s"]["vars"]["gateway"]
+  dns_servers = local.inventory["microk8s"]["vars"]["dns_servers"]
+}
+
 resource "proxmox_virtual_environment_download_file" "image" {
   content_type = "iso"
   datastore_id = "local"
@@ -25,5 +33,3 @@ module "proxmox-ubuntu-vm" {
   pve_datastore_id = var.virtual_environment.datastore_id
   dns_servers = local.dns_servers
 }
-
-```

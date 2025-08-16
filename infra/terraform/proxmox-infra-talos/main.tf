@@ -1,13 +1,3 @@
-data "local_file" "ansible_inventory" {
-  filename = "../ansible/inventory.yaml"
-}
-
-locals {
-  inventory = yamldecode(data.local_file.ansible_inventory.content)
-  hosts = local.inventory["microk8s"]["hosts"]
-  gateway = local.inventory["microk8s"]["vars"]["gateway"]
-  dns_servers = local.inventory["microk8s"]["vars"]["dns_servers"]
-}
 
 locals {
   talos = {
@@ -77,13 +67,4 @@ module "talos_worker" {
     "node-type"                      = "worker"
     "environment"                    = "homelab"
   }
-}
-
-# Output the IP addresses
-output "controlplane_ip" {
-  value = module.talos_controlplane_01.ipv4_address
-}
-
-output "worker_ips" {
-  value = module.talos_worker[*].ipv4_address
 }

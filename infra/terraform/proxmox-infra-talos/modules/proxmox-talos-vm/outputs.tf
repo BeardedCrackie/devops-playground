@@ -10,12 +10,12 @@ output "vm_id" {
 
 output "ipv4_address" {
   description = "IPv4 address of the VM"
-  value       = length(proxmox_virtual_environment_vm.talos_vm.ipv4_addresses) > 1 ? proxmox_virtual_environment_vm.talos_vm.ipv4_addresses[1][0] : null
-}
-
-output "mac_address" {
-  description = "MAC address of the VM"
-  value       = proxmox_virtual_environment_vm.talos_vm.mac_addresses[0]
+  value = try(
+    [for ip in proxmox_virtual_environment_vm.talos_vm.ipv4_addresses[7] : 
+      ip if !startswith(ip, "127.")
+    ][0],
+    null
+  )
 }
 
 output "node_name" {
