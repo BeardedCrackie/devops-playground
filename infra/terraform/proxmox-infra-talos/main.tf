@@ -1,7 +1,7 @@
 
 locals {
   talos = {
-    version = "v1.7.4"
+    version = "v1.10.6"
   }
 }
 
@@ -10,7 +10,7 @@ resource "proxmox_virtual_environment_download_file" "talos_image" {
   datastore_id = "local"
   file_name    = "talos-${local.talos.version}-nocloud-amd64.img"
   node_name    = var.virtual_environment.node_name
-  url          = "https://factory.talos.dev/image/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515/v1.10.6/nocloud-amd64.iso"
+  url          = "https://factory.talos.dev/image/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515/${local.talos.version}/nocloud-amd64.iso"
   overwrite    = false
 }
 
