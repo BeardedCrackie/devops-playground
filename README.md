@@ -29,4 +29,24 @@ This repository is intended for:
 - Demonstrating end-to-end workflows for application development, deployment, and monitoring.
 - Serving as a reference for setting up similar environments in real-world projects.
 
+## Setting Up and Starting the Virtual Environment
+
+To set up and activate the virtual environment for this project, follow these steps:
+
+1. **Run the setup script**:
+   ```bash
+   ./scripts/venv-setup.sh
+   ```
+   This script will create a virtual environment and install the required dependencies.
+
+2. **Activate the virtual environment**:
+   ```bash
+   source ./scripts/venv-activate.sh
+   ```
+
+3. **Deactivate the virtual environment** (when done):
+   ```bash
+   deactivate
+   ```
+
 Feel free to explore the repository and adapt its components to your own projects!
