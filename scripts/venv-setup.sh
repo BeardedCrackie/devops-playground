@@ -36,7 +36,7 @@ rm /tmp/${TERRAFORM_ZIP}
 terraform version
 
 # Install Terragrunt
-TERRAGRUNT_VERSION="v0.69.10"
+TERRAGRUNT_VERSION="v0.85.0"
 TERRAGRUNT_BIN="terragrunt"
 TERRAGRUNT_URL="https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64"
 
