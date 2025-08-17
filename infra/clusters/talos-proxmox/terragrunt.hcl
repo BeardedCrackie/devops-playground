@@ -17,8 +17,19 @@ locals {
 }
 
 remote_state {
-  backend = "local"
+  backend = "s3"
   config = {
-    path = "terraform.tfstate"
+    endpoints = {
+      s3 = "http://<minio-host>:<port>" # use web port, not admin
+    }
+    bucket                      = "<bucket>"
+    key                         = "provision/terraform.tfstate"
+    region                      = "us-east-1"
+    access_key                  = "<access_key>"
+    secret_key                  = "<secret_key>"
+    skip_credentials_validation = true
+    skip_metadata_api_check     = true
+    use_path_style              = true
+    skip_requesting_account_id  = true
   }
 }
