@@ -17,7 +17,16 @@ resource "helm_release" "kube_prometheus_stack" {
   namespace  = kubernetes_namespace.monitoring.metadata[0].name
   create_namespace = false
 
+  values = [
+  yamlencode({
+    grafana = {
+      enabled = false
+    }
+  })
+  ]
+
   depends_on = [
     kubernetes_namespace.monitoring
   ]
+
 }
