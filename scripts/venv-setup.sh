@@ -35,6 +35,19 @@ rm /tmp/${TERRAFORM_ZIP}
 # Test Terraform install
 terraform version
 
+# Install Terragrunt
+TERRAGRUNT_VERSION="v0.69.10"
+TERRAGRUNT_BIN="terragrunt"
+TERRAGRUNT_URL="https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64"
+
+echo "Installing Terragrunt ${TERRAGRUNT_VERSION}..."
+
+curl -fsSLo ../venv/bin/${TERRAGRUNT_BIN} ${TERRAGRUNT_URL}
+chmod +x ../venv/bin/${TERRAGRUNT_BIN}
+
+# Test Terragrunt install
+../venv/bin/terragrunt --version
+
 
 KUSTOMIZE_VERSION="v5.7.1"
 KUSTOMIZE_TAR="kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
