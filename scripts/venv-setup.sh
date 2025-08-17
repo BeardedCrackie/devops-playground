@@ -58,6 +58,28 @@ rm /tmp/${KUSTOMIZE_TAR}
 echo "kustomize installed to ${VENV_BIN}/kustomize"
 
 
+# Install Task CLI
+TASK_VERSION="3.24.0"
+TASK_TAR="task_linux_amd64.tar.gz"
+TASK_URL="https://github.com/go-task/task/releases/download/v${TASK_VERSION}/${TASK_TAR}"
+
+echo "Installing Task ${TASK_VERSION}..."
+
+curl -fsSLo /tmp/${TASK_TAR} ${TASK_URL}
+
+# Extract task binary from the tar.gz (it contains just one file named 'task')
+tar -xzf /tmp/${TASK_TAR} -C /tmp/
+
+# Move binary to venv bin
+mv /tmp/task ${VENV_BIN}/
+chmod +x ${VENV_BIN}/task
+
+# Clean up
+rm /tmp/${TASK_TAR}
+
+echo "Task installed to ${VENV_BIN}/task"
+
+
 # Deactivate the virtual environment
 deactivate
 
