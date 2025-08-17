@@ -1,38 +1,52 @@
 # devops-playground
 
+`devops-playground` is a comprehensive repository designed to explore and demonstrate modern DevOps practices, tools, and workflows. This project serves as a sandbox for experimenting with infrastructure automation, GitOps, CI/CD pipelines, and application deployment strategies.
+
+## Repository Structure
+
 ```
 repo-root/
-├── apps/                    # Application repositories (code and Dockerfiles)
-│   ├── app1/               # Application 1 (e.g., Health Check Microservice)
-│   │   ├── src/            # Source code
-│   │   ├── Dockerfile      # Dockerfile for this app
-│   │   ├── requirements.txt # App dependencies (for Python, etc.)
-|   |   ├── docs/           # Documentation for both app and infra
-│   │   └── README.md       # App-specific README
-│   ├── app2/               # Application 2 (e.g., To-Do API)
-│   └── app3/               # Application 3 (another example app)
-│
-├── infra/                  # Infrastructure repository (Kubernetes, GitOps, Helm)
-│   ├── apps/               # Manifests for multiple apps
-│   │   ├── app1/           # App1 specific configs
-│   │   │   ├── base/       # Environment-agnostic configurations (e.g., deployment, service)
-│   │   │   ├── overlays/   # Environment-specific configurations (e.g., dev, prod)
-│   │   │   ├── kustomization.yaml
-│   │   │   ├── values.yaml
-│   |   |   └── ci-cd/      # CI/CD pipeline definitions (GitHub Actions, GitLab CI)
-│   │   ├── app2/           # App2 specific configs
-│   │   ├── app3/           # App3 specific configs
-│   │   └── helm-chart/     # Optional: Helm charts for all apps
-│   ├── clusters/           # Cluster-level configurations
-│   │   ├── dev-cluster/    # Dev environment-specific configurations
-│   │   ├── prod-cluster/   # Prod environment-specific configurations
-│   │   └── staging-cluster/
-│   ├── gitops/             # GitOps configurations (ArgoCD/Flux)
-│   │   ├── argo-cd.yaml    # ArgoCD installation and configuration
-│   │   └── flux.yaml       # Flux configuration (optional, depending on tool)
-│   ├── monitoring/         # Monitoring and observability (Prometheus, Grafana)
-│   └── README.md           # Infrastructure-specific README
-|
-├── .gitignore              # Ignore unnecessary files - linked to subdirs if neede
-└── README.md               # General README for the repository
+├── apps/                    # Application repositories
+├── gitops/                  # GitOps configurations
+├── infra/                   # Infrastructure configurations
+├── scripts/                 # Common utility scripts
+├── LICENSE                  # License file
+├── ROADMAP.md               # Roadmap for the project
+└── README.md                # General README for the repository
 ```
+
+## Key Features
+
+- **Apps**: Contains the source code and Docker configurations for various applications.
+- **GitOps**: Houses configurations for managing infrastructure and applications using GitOps principles.
+- **Infra**: Includes infrastructure-as-code (IaC) configurations for provisioning and managing Kubernetes clusters and other resources.
+- **Scripts**: Provides utility scripts for setting up and managing the development environment.
+
+## Purpose
+
+This repository is intended for:
+- Learning and experimenting with DevOps tools and practices.
+- Demonstrating end-to-end workflows for application development, deployment, and monitoring.
+- Serving as a reference for setting up similar environments in real-world projects.
+
+## Setting Up and Starting the Virtual Environment
+
+To set up and activate the virtual environment for this project, follow these steps:
+
+1. **Run the setup script**:
+   ```bash
+   ./scripts/venv-setup.sh
+   ```
+   This script will create a virtual environment and install the required dependencies.
+
+2. **Activate the virtual environment**:
+   ```bash
+   source ./scripts/venv-activate.sh
+   ```
+
+3. **Deactivate the virtual environment** (when done):
+   ```bash
+   deactivate
+   ```
+
+Feel free to explore the repository and adapt its components to your own projects!

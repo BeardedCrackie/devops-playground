@@ -1,0 +1,130 @@
+---
+
+- name: Create CA
+  hosts: localhost
+  become: true
+  tags: [ca]
+  vars:
+    ca_key_file: "{{ ssl_dir }}/ca.key"
+    ca_cert_file: "{{ ssl_dir }}/ca.crt"
+    ca_csr_file: "{{ ssl_dir }}/ca.csr"
+    wildcard_key_file: "{{ ssl_dir }}/wildcard.k8s.local.key"
+    wildcard_cert_file: "{{ ssl_dir }}/wildcard.k8s.local.crt"
+    wildcard_csr_file: "{{ ssl_dir }}/wildcard.k8s.local.csr"
+    csr_config_file: "{{ ssl_dir }}/wildcard-csr.conf"
+    target_namespace: ingress
+  tasks:
+    - name: Create SSL directory
+      file:
+        path: "{{ ssl_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Generate CA private key
+      community.crypto.openssl_privatekey:
+        path: "{{ ca_key_file }}"
+        size: 4096
+        type: RSA
+        state: present
+
+    - name: Generate CA certificate signing request
+      community.crypto.openssl_csr:
+        path: "{{ ca_csr_file }}"
+        privatekey_path: "{{ ca_key_file }}"
+        common_name: "K8s Local CA"
+        basic_constraints:
+          - "CA:TRUE"
+        basic_constraints_critical: true
+        key_usage:
+          - "keyCertSign"
+          - "cRLSign"
+        key_usage_critical: true
+        state: present
+
+    - name: Generate CA certificate
+      community.crypto.x509_certificate:
+        path: "{{ ca_cert_file }}"
+        csr_path: "{{ ca_csr_file }}"
+        privatekey_path: "{{ ca_key_file }}"
+        provider: selfsigned
+        selfsigned_not_after: "+3650d"
+        state: present
+
+    - name: Generate wildcard private key
+      community.crypto.openssl_privatekey:
+        path: "{{ wildcard_key_file }}"
+        size: 2048
+        type: RSA
+        state: present
+
+    - name: Create CSR config file
+      copy:
+        dest: "{{ csr_config_file }}"
+        content: |
+          [ req ]
+          default_bits       = 2048
+          prompt             = no
+          default_md         = sha256
+          req_extensions     = req_ext
+          distinguished_name = dn
+
+          [ dn ]
+          CN = *.k8s.local
+
+          [ req_ext ]
+          subjectAltName = @alt_names
+
+          [ alt_names ]
+          DNS.1 = *.k8s.local
+          DNS.2 = k8s.local
+
+    - name: Generate wildcard certificate signing request
+      community.crypto.openssl_csr:
+        path: "{{ wildcard_csr_file }}"
+        privatekey_path: "{{ wildcard_key_file }}"
+        common_name: "*.k8s.local"
+        subject_alt_name:
+          - "DNS:*.k8s.local"
+          - "DNS:k8s.local"
+        state: present
+
+    - name: Generate wildcard certificate signed by CA
+      community.crypto.x509_certificate:
+        path: "{{ wildcard_cert_file }}"
+        csr_path: "{{ wildcard_csr_file }}"
+        ownca_path: "{{ ca_cert_file }}"
+        ownca_privatekey_path: "{{ ca_key_file }}"
+        provider: ownca
+        ownca_not_after: "+825d"
+        state: present
+
+    - name: Copy CA certificate to easily accessible location
+      copy:
+        src: "{{ ca_cert_file }}"
+        dest: "/tmp/ca.crt"
+        remote_src: true
+        mode: '0644'
+
+    - name: Display SSL certificate creation summary
+      debug:
+        msg: |
+          SSL CA and wildcard certificate created successfully!
+          
+          Files created:
+          - CA private key: {{ ca_key_file }}
+          - CA certificate: {{ ca_cert_file }}
+          - Wildcard private key: {{ wildcard_key_file }}
+          - Wildcard certificate: {{ wildcard_cert_file }}
+          - CA certificate (copy): /tmp/ca.crt
+          - Windows import script: /tmp/import-ca-windows.ps1
+          
+          The wildcard certificate covers:
+          - *.k8s.local
+          - k8s.local
+          
+          Next steps:
+          1. Run the k8s-import-ssl.yaml playbook to import into Kubernetes
+          2. To trust certificates on Windows:
+            - Copy /tmp/ca.crt to your Windows machine
+            - Manually import via Certificate Manager (certmgr.msc)
+
