@@ -2,16 +2,16 @@
 
 # Get the directory of this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-INFRA_DIR="$SCRIPT_DIR/.."
-
+ROOT_DIR="$SCRIPT_DIR/.." 
+ 
 sudo apt update
 sudo apt install -y python3-venv curl unzip
 
 # Create a Python virtual environment in the ansible folder
-python3 -m venv $INFRA_DIR/venv
+python3 -m venv $ROOT_DIR/venv
 
 # Activate the virtual environment
-source $INFRA_DIR/venv/bin/activate
+source $ROOT_DIR/venv/bin/activate
 
 # Upgrade pip and install Ansible and Kubernetes Python client
 pip install --upgrade pip
