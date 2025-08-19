@@ -32,4 +32,5 @@ inputs = {
     }
     project_name      = "devops-playground"
     priv_key_path     = "~/.ssh/id_ed25519"
+    cluster_name      = "devops-playground-mngmt"
 }
