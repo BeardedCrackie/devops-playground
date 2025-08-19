@@ -11,8 +11,8 @@ output "kubeconfig" {
 }
 
 output "kubeconfig_path" {
-  description = "Path to the generated kubeconfig file"
-  value       = local_file.kubeconfig.filename
+  description = "Absolute path to the generated kubeconfig file"
+  value       = abspath(local_file.kubeconfig.filename)
 }
 
 output "ca_certificate" {
