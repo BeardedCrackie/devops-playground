@@ -36,6 +36,9 @@ resource "kubernetes_manifest" "metallb_ipaddresspool" {
       autoAssign = true
     }
   }
+  depends_on = [
+    helm_release.metallb
+  ]
 }
 
 # MetalLB L2Advertisement CR
@@ -51,4 +54,7 @@ resource "kubernetes_manifest" "metallb_l2advertisement" {
       ipAddressPools = [kubernetes_manifest.metallb_ipaddresspool.manifest["metadata"]["name"]]
     }
   }
+  depends_on = [
+    helm_release.metallb
+  ]
 }
