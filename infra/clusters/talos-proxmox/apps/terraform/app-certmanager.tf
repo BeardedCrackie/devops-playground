@@ -17,25 +17,25 @@ resource "helm_release" "cert_manager" {
   ]
 }
 
-variable "ca_cert_path" {
-  description = "Path to the CA certificate file"
-  type        = string
-}
-
-variable "ca_key_path" {
-  description = "Path to the CA private key file"
-  type        = string
-}
-
-resource "kubernetes_secret" "talos_ca" {
-  metadata {
-    name      = "talos-ca"
-    namespace = "cert-manager"
-  }
-  type = "kubernetes.io/tls"
-  data = {
-    "tls.crt" = filebase64(var.ca_cert_path)
-    "tls.key" = filebase64(var.ca_key_path)
-  }
-  depends_on = [helm_release.cert_manager]
-}
+#variable "ca_cert_path" {
+#  description = "Path to the CA certificate file"
+#  type        = string
+#}
+#
+#variable "ca_key_path" {
+#  description = "Path to the CA private key file"
+#  type        = string
+#}
+#
+#resource "kubernetes_secret" "talos_ca" {
+#  metadata {
+#    name      = "talos-ca"
+#    namespace = "cert-manager"
+#  }
+#  type = "kubernetes.io/tls"
+#  data = {
+#    "tls.crt" = filebase64(var.ca_cert_path)
+#    "tls.key" = filebase64(var.ca_key_path)
+#  }
+#  depends_on = [helm_release.cert_manager]
+#}
