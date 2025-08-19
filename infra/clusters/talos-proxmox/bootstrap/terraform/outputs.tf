@@ -10,6 +10,11 @@ output "kubeconfig" {
   sensitive   = true
 }
 
+output "kubeconfig_path" {
+  description = "Path to the generated kubeconfig file"
+  value       = local_file.kubeconfig.filename
+}
+
 output "ca_certificate" {
   description = "CA certificate for importing to Windows"
   value       = talos_machine_secrets.this.client_configuration.ca_certificate
