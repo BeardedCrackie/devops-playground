@@ -54,3 +54,5 @@ kubeconfig
 remote.tf
 
 inventory.yaml
+
+root.hcl
