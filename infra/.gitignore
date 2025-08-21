@@ -37,6 +37,8 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+.terragrunt*
+
 # Ignore autovar
 */.auto.tfvars
 
@@ -52,3 +54,5 @@ kubeconfig
 remote.tf
 
 inventory.yaml
+
+root.hcl

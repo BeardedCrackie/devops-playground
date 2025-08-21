@@ -3,7 +3,7 @@ data "talos_machine_configuration" "worker" {
   count = length(local.worker_ips)
   cluster_name     = var.cluster_name
   machine_type     = "worker"
-  cluster_endpoint = var.cluster_endpoint
+  cluster_endpoint = local.cluster_endpoint
   machine_secrets  = talos_machine_secrets.this.machine_secrets
 }
 

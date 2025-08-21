@@ -4,10 +4,8 @@ variable "cluster_name" {
   default     = "homelab-k8s"
 }
 
-variable "cluster_endpoint" {
-  description = "Cluster endpoint URL"
-  type        = string
-  default     = "https://192.168.0.60:6443"
+locals {
+  cluster_endpoint = "https://${var.controlplane_ip}:6443"
 }
 
 variable "kubernetes_version" {
@@ -20,4 +18,14 @@ variable "talos_version" {
   description = "Talos version to use"
   type        = string
   default     = "v1.10.6"
+}
+
+variable "controlplane_ip" {
+  description = "IP address of the control plane node"
+  type        = string
+}
+
+variable "worker_ips" {
+  description = "List of worker node IPs"
+  type        = list(string)
 }

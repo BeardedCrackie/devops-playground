@@ -27,3 +27,9 @@ resource "talos_cluster_kubeconfig" "this" {
   client_configuration = talos_machine_secrets.this.client_configuration
   node                 = local.controlplane_ip
 }
+
+resource "local_file" "kubeconfig" {
+  content  = talos_cluster_kubeconfig.this.kubeconfig_raw
+  filename = "${path.module}/kubeconfig"
+  file_permission = "0600"
+}
