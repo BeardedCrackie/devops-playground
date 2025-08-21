@@ -1,6 +1,0 @@
-previous config
-
-```
-
-
-```
