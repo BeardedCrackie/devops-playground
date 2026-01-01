@@ -251,9 +251,18 @@ Replace provision phase with AWS EC2 instances:
 ```hcl
 # provision/main.tf (AWS version)
 resource "aws_instance" "talos_control_plane" {
+  count         = var.control_plane_count
   ami           = var.talos_ami
   instance_type = "t3.medium"
-  # ...
+  subnet_id     = var.subnet_id
+  
+  tags = {
+    Name = "talos-cp-${count.index}"
+  }
+}
+
+output "control_plane_ips" {
+  value = aws_instance.talos_control_plane[*].private_ip
 }
 ```
 
@@ -262,9 +271,22 @@ Replace provision phase with Azure VMs:
 ```hcl
 # provision/main.tf (Azure version)
 resource "azurerm_linux_virtual_machine" "talos_control_plane" {
-  name     = "talos-cp-${count.index}"
-  vm_size  = "Standard_D2s_v3"
-  # ...
+  count               = var.control_plane_count
+  name                = "talos-cp-${count.index}"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  size                = "Standard_D2s_v3"
+  
+  network_interface_ids = [azurerm_network_interface.cp[count.index].id]
+  
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Premium_LRS"
+  }
+}
+
+output "control_plane_ips" {
+  value = azurerm_network_interface.cp[*].private_ip_address
 }
 ```
 
