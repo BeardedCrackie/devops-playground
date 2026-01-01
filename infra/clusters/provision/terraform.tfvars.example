@@ -1,0 +1,40 @@
+# Example Proxmox and VM configuration for Talos provisioning
+# Copy this file to provision/terraform.tfvars and customize for your environment
+
+# Proxmox connection settings
+proxmox_host = "proxmox.example.com"
+proxmox_port = 8006
+proxmox_user = "root@pam"
+# proxmox_password = "set-via-environment-variable"  # Use TF_VAR_proxmox_password
+proxmox_node = "pve"
+
+# Talos cluster configuration
+cluster_name = "talos-k8s"
+cluster_domain = "cluster.local"
+
+# Control plane nodes
+control_plane_count = 3
+control_plane_cores = 4
+control_plane_memory = 8192
+control_plane_disk_size = 50
+
+# Worker nodes
+worker_count = 2
+worker_cores = 4
+worker_memory = 8192
+worker_disk_size = 100
+
+# Network configuration
+network_bridge = "vmbr0"
+network_gateway = "192.168.1.1"
+network_dns = ["8.8.8.8", "8.8.4.4"]
+
+# IP address range for nodes (customize based on your network)
+control_plane_ip_start = "192.168.1.10"
+worker_ip_start = "192.168.1.20"
+
+# Talos version
+talos_version = "v1.8.0"
+
+# Storage pool
+storage_pool = "local-lvm"

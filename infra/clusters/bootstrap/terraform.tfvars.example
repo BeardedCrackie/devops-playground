@@ -1,0 +1,33 @@
+# Example bootstrap configuration for Talos cluster
+# Copy this file to bootstrap/terraform.tfvars and customize for your environment
+
+# Cluster endpoint (VIP or load balancer for control plane)
+cluster_endpoint = "https://talos.k8s.local:6443"
+
+# Kubernetes version to deploy
+kubernetes_version = "v1.29.0"
+
+# Cluster network configuration
+cluster_pod_cidr = "10.244.0.0/16"
+cluster_service_cidr = "10.96.0.0/12"
+
+# CNI configuration
+cni = "cilium"  # Options: calico, cilium, flannel
+
+# Enable cluster features
+enable_disk_encryption = false
+enable_kube_span = false
+
+# Talos configuration patches (optional)
+# Apply custom configuration patches to control plane and worker nodes
+# control_plane_patches = []
+# worker_patches = []
+
+# DNS configuration
+cluster_dns = ["8.8.8.8", "8.8.4.4"]
+
+# Timezone configuration
+timezone = "UTC"
+
+# Kubeconfig output path (optional)
+# kubeconfig_path = "~/.kube/talos-config"

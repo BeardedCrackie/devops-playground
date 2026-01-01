@@ -9,7 +9,8 @@ This roadmap outlines the infrastructure and application goals, progress, and cu
 ### 🚀 Provisioning
 - [x] Proxmox Ubuntu provision with Terraform
 - [x] Ansible init microk8s
-- [ ] Proxmox provision Talos with Terraform
+- [x] Proxmox provision Talos with Terraform
+- [x] Talos cluster bootstrap with Terraform
 
 ### 🧱 Base Apps
 - [x] Helm
