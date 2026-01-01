@@ -1,0 +1,35 @@
+# Terraform files
+.terraform/
+.terragrunt-cache/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+
+# Backup files
+*.backup
+*.bak
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Lock files (keep these in version control for consistency)
+# Uncomment to ignore them
+# .terraform.lock.hcl
+
+# Sensitive files
+*.pem
+*.key
+*kubeconfig*
+talosconfig
+
+# Local overrides
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration files
+.terraformrc
+terraform.rc
