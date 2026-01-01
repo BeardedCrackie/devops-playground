@@ -2,6 +2,10 @@
 
 This directory contains the infrastructure-as-code setup for provisioning and bootstrapping Talos Kubernetes clusters using Terraform and Terragrunt.
 
+## 🚀 New to This? Start Here!
+
+If this is your first time setting up a Talos cluster, check out the [**Getting Started Guide**](GETTING_STARTED.md) for a step-by-step walkthrough.
+
 ## Overview
 
 The setup is divided into two phases:
@@ -217,6 +221,13 @@ terragrunt run-all init
 
 ## Additional Resources
 
+### Documentation
+- **[GETTING_STARTED.md](GETTING_STARTED.md)** - First-time user guide with step-by-step instructions
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Visual diagrams and architecture overview
+- **[UNIVERSAL_BOOTSTRAP_GUIDE.md](UNIVERSAL_BOOTSTRAP_GUIDE.md)** - Design principles and universal approach
+- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Command cheat sheet for common operations
+
+### External Links
 - [Talos Linux Documentation](https://www.talos.dev/)
 - [Terragrunt Documentation](https://terragrunt.gruntwork.io/)
 - [Proxmox Provider Documentation](https://registry.terraform.io/providers/bpg/proxmox/latest/docs)
